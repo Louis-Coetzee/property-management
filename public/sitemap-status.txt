@@ -1,0 +1,145 @@
+SITEMAP & ROBOTS.TXT IMPLEMENTATION SUMMARY
+============================================
+
+CURRENT ISSUE:
+--------------
+The sitemap.xml and robots.txt are returning 404 because Next.js is treating these paths as dynamic routes under the multi-tenant [domain] structure. The app/[domain]/[slug]/page.tsx catch-all is intercepting these requests.
+
+TARGET URLs WE NEED TO GET WORKING:
+-----------------------------------
+- https://pinkroyalperfumery.livewebapp.site/robots.txt
+- https://pinkroyalperfumery.livewebapp.site/sitemap.xml
+
+These are the standard URLs that Google expects.
+
+ATTEMPTS MADE:
+-------------
+1. Created /app/sitemap.xml/route.ts - did NOT work (404)
+2. Created /app/robots.txt/route.ts - did NOT work (404)  
+3. Created /app/api/sitemap/route.ts - WORKED with ?domain= parameter
+4. Created /app/api/robots/route.ts - WORKED with ?domain= parameter
+5. Added Next.js rewrites in next.config.ts - did NOT work
+6. Created /middleware.ts with matcher - did NOT work (404)
+
+WORKING SOLUTION:
+----------------
+Use the API routes with domain parameter (CURRENTLY WORKING):
+
+✅ https://pinkroyalperfumery.livewebapp.site/api/sitemap?domain=pinkroyalperfumery.livewebapp.site
+   Returns valid XML sitemap with all pages
+
+✅ https://pinkroyalperfumery.livewebapp.site/api/robots?domain=pinkroyalperfumery.livewebapp.site
+   Returns valid robots.txt content
+
+These work because /api/* paths bypass the [domain] catch-all.
+
+WHY THE MAIN URLs FAIL:
+----------------------
+The app uses multi-tenant routing where:
+- app/[domain]/layout.tsx catches all domains
+- app/[domain]/[slug]/page.tsx catches ALL paths for those domains
+
+When requesting /robots.txt:
+- Next.js matches as: params = { domain: "pinkroyalperfumery.livewebapp.site", slug: "robots.txt" }
+- No page exists for "robots.txt" slug → returns 404
+
+POTENTIAL SOLUTIONS TO GET STANDARD URLs WORKING:
+-------------------------------------------------
+Option A: Keep using API routes and submit to Google manually
+- Use /api/sitemap?domain=domain.com for search engine submission
+- Works but not ideal
+
+Option B: Create page files in /public folder
+- Create /public/robots.txt and /public/sitemap.xml
+- Won't auto-update with new pages (would need regeneration)
+
+Option C: Fix the routing (requires app changes)
+- Modify [slug] page to handle /robots.txt and /sitemap.xml specially
+- OR exclude these paths in the slug matcher
+- OR move sitemap generation to edge function
+
+RECOMMENDED APPROACH FOR NOW:
+----------------------------
+Since the API routes work, we can:
+1. Submit /api/sitemap?domain=yourdomain.com to Google Search Console
+2. Use /api/robots?domain=yourdomain.com in any documentation
+3. Wait for Vercel to fix or implement edge function solution
+
+The sitemap includes:
+- Homepage (/)
+- /products page
+- /checkout page
+- All custom pages from the database
+
+================================================================================
+APPLICATION STRUCTURE & TECH STACK
+================================================================================
+
+TECHNOLOGY STACK:
+----------------
+- Framework: Next.js 16.1.6
+- Language: TypeScript
+- Database: Convex (Serverless real-time database)
+- Auth: Clerk
+- Styling: Tailwind CSS
+- Hosting: Vercel
+- Package Manager: npm
+
+MULTI-TENANT ARCHITECTURE:
+--------------------------
+The app uses a subdomain-based multi-tenant system:
+
+Structure:
+- app/
+  ├── [domain]/           # Dynamic domain routing
+  │   ├── layout.tsx     # Domain-specific layout
+  │   ├── page.tsx      # Homepage for each domain
+  │   ├── [slug]/       # Custom pages per domain
+  │   ├── products/     # Product pages
+  │   ├── checkout/    # Checkout flow
+  │   ├── companies/   # Company CRM
+  │   └── auth/         # Authentication routes
+  └── api/               # API routes (not domain-captured)
+
+How it works:
+1. User visits pinkroyalperfumery.livewebapp.site
+2. [domain]/layout.tsx extracts domain from URL
+3. Queries Convex database for website by domain
+4. Renders domain-specific content
+5. Uses page builder to generate dynamic pages
+
+MIDDLEWARE:
+-----------
+Currently created at: /middleware.ts
+
+The middleware was attempted to intercept 
+/robots.txt and /sitemap.xml requests BEFORE they reach 
+the [domain] catch-all, but the domain layout still catches them.
+
+DATABASE (CONVEX):
+------------------
+Key tables:
+- websites: Stores website configurations, domains, branding
+- pages: Stores custom pages for each website  
+- products: Product catalog
+- companies: Company information
+- users: User accounts
+- orders: Customer orders
+
+KEY FILES:
+----------
+- /app/[domain]/layout.tsx - Main domain layout
+- /app/[domain]/page.tsx - Homepage
+- /app/[domain]/[slug]/page.tsx - Dynamic slug pages
+- /convex/schema.ts - Database schema
+- /convex/ - Server-side functions (queries/mutations)
+- /components/ - React components
+- /lib/ - Utility functions
+- /middleware.ts - Route interception
+
+DOMAIN ROUTING FLOW:
+-------------------
+Request → middleware.ts → [domain]/layout.tsx → [domain]/[slug]/page.tsx
+
+The issue is that /robots.txt and /sitemap.xml are being 
+matched as [slug] parameters instead of being handled separately.

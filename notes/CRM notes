@@ -1,0 +1,71 @@
+add this Option in the exsting testimonials section - it usually the cleanest and lowest-maintenance approach.
+
+Layout Example
+
+⭐⭐⭐⭐⭐ 4.9/5 Rating
+Based on 127 Google Reviews
+
+[Read Reviews on Google] button
+
+Then below:
+
+What Our Clients Say
+
+(Your existing testimonials section)
+
+Testimonial 1
+Testimonial 2
+Testimonial 3
+Why it's a strong approach
+✅ Fast-loading website
+✅ Cleaner design than embedding dozens of reviews
+
+
+✅ You control your testimonial section
+✅ Visitors still have direct access to Google reviews
+✅ Less dependency on Google APIs
+✅ Lower compliance risk
+Legal/Compliance Considerations
+
+To stay on the safe side:
+
+Display the rating and review count exactly as obtained from Google.
+Do not claim reviews are from Google unless they actually are.
+Include a clear "Read Reviews on Google" link.
+Do not copy Google review text into your own testimonial section unless you have permission from the reviewer.
+Refresh rating/review count periodically so it remains accurate.
+Follow current Google Maps Platform and Business Profile terms.
+
+
+
+
+
+Changethe payemnts card to "transactions" and direct to a new page (create new page for transactions for this compnay)
+
+
+add ability to add and edtid and delet transactions (wiyth profetional deletion confoirmation modal). for adding a transaction direct to a new page with mutistep form (not a modal). For edting a transaction also direct to another new page with prefilled values of that transaction to edit the tranaction. Must be fully mobile responsive anf proftional.
+
+Adding a rransction should have mutistep form step 1 Transaction type Income or expence, step two if income buton to choose between exting invoice or other income and change content on step two based on selction, add more fileds in step 2 and add step 3 and 4 should be summary (review to cionfirm). Alos add steps foe expence for example slect a supplier or other expense, expense type etc also 4 steps in total.
+
+
+the send invoice email buttoj in view invoice modal are working correctly sending the email, but should alos automatically include apdf attchment of that invoiv=ce to that email. and inure the save and send button on https://refreshcrm.vercel.app/refreshcrm.vercel.app/companies/nd7f071k6p2mhtnq1x4yj4mmb981k1cr/crm/invoices/rs7211p5g9jwkdka5xgc1xax9h87y2v1/edit does the same as currently not sending the email form save and send button on https://refreshcrm.vercel.app/refreshcrm.vercel.app/companies/nd7f071k6p2mhtnq1x4yj4mmb981k1cr/crm/invoices/rs7211p5g9jwkdka5xgc1xax9h87y2v1/edit see how view invoice modal sending invoice works correctly.  On https://refreshcrm.vercel.app/refreshcrm.vercel.app/companies/nd7f071k6p2mhtnq1x4yj4mmb981k1cr/crm/invoices/rs7211p5g9jwkdka5xgc1xax9h87y2v1/edit the save and send button should first open a confirmatioon modal whwre the invoice will be emailded to immedialty and not only on scheduled times but now and on recuuring and sechedulked dates and times. and then resolve the fact that it doesbnt send the email like it does on the biew invoice modal. Shoiuld alos include the pdf attachement when ever invoices are sent.
+
+
+
+create anew theme on https://www.jobiz.co.za/manage/site-settings called theme 4.
+
+Then look at how the other themes are imoletneted and add this new one. This new tehme shouyld have a comoplete diffrents appearnce. It should be very modern and profetional design using the followimg main colours 
+
+#1B2B6B — 
+#B8922A — 
+#FFFFFF — 
+
+
+First only craeye the temem and only upadte the /businesses page so that i can review the appearnce of the them on that page before rolling out to all other required pages.
+
+
+
+Insure it us a fully functional for all revalant pages including all auth pages.
+
+
+acrosst the whole application all themes change from Jobiz to BizNation 

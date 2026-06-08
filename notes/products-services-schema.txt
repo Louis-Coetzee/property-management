@@ -1,0 +1,298 @@
+# Products & Services Schema Documentation
+
+## Companies Table
+
+Companies are the top-level organizational entity. All products and services belong to a company.
+
+```
+companies: defineTable({
+  name: v.string(),                    // REQUIRED - Company name
+  description: v.optional(v.string()),  // OPTIONAL
+  enabled: v.boolean(),                 // REQUIRED
+  enabledApps: v.optional(v.object({   // OPTIONAL - App enablement config
+    businessTools: v.optional(v.object({
+      enabled: v.boolean(),
+      enabledAt: v.optional(v.number()),
+    })),
+    websites: v.optional(v.object({...})),
+    vehicleDealership: v.optional(v.object({...})),
+    onlineStore: v.optional(v.object({...})),
+    bookingsApp: v.optional(v.object({...})),
+    realEstate: v.optional(v.object({...})),
+  })),
+  currency: v.optional(v.object({      // OPTIONAL - Currency settings
+    code: v.optional(v.string()),      // e.g., "USD", "EUR", "ZAR"
+    symbol: v.optional(v.string()),    // e.g., "$", "€", "R"
+    symbolPosition: v.optional(v.string()), // "before" or "after"
+    customSymbol: v.optional(v.string()),
+  })),
+  timezone: v.optional(v.string()),     // OPTIONAL - e.g., "Africa/Johannesburg"
+  credit: v.optional(v.object({        // OPTIONAL - Shipping credit system
+    balance: v.number(),
+    totalSpent: v.number(),
+    lastUpdated: v.number(),
+  })),
+  branding: v.optional(v.object({     // OPTIONAL - Company branding
+    primaryColor: v.optional(v.string()),
+    logoUrl: v.optional(v.string()),
+    faviconUrl: v.optional(v.string()),
+    logoType: v.optional(v.union(v.literal("image"), v.literal("text"))),
+    logoText: v.optional(v.string()),
+    logoTextColor: v.optional(v.string()),
+  })),
+  paymentSettings: v.optional(v.object({ // OPTIONAL - Payment gateway settings
+    payfast: v.optional(v.object({...})),
+    paypal: v.optional(v.object({...})),
+  })),
+  subdomain: v.optional(v.string()),   // OPTIONAL - Company subdomain
+  customDomain: v.optional(v.string()), // OPTIONAL - Legacy field
+  primaryDomain: v.optional(v.string()), // OPTIONAL - SEO canonical domain
+  createdAt: v.number(),               // REQUIRED - Unix timestamp
+  updatedAt: v.number(),               // REQUIRED - Unix timestamp
+})
+.index("by_name", ["name"])
+.index("by_subdomain", ["subdomain"])
+```
+
+### Company Indexes
+- `by_name` - Search companies by name
+- `by_subdomain` - Find company by subdomain
+
+---
+
+## Products Table
+
+```
+products: defineTable({
+  // REQUIRED FIELDS
+  name: v.string(),                     // Product name
+  reference: v.string(),                // Internal SKU/reference number
+  price: v.number(),                    // Selling price
+  status: v.string(),                   // "draft" | "available" | "out_of_stock" | "discontinued"
+  isActive: v.boolean(),                // Soft delete flag
+  companyId: v.id("companies"),         // Foreign key to companies
+
+  // OPTIONAL FIELDS
+  description: v.optional(v.string()),
+  categories: v.optional(v.array(v.string())),  // Array of category names
+
+  // Pricing
+  discountedPrice: v.optional(v.number()),    // Sale price
+  cost: v.optional(v.number()),                  // Internal cost price
+
+  // Inventory
+  sku: v.optional(v.string()),                  // Stock keeping unit
+  stockQuantity: v.optional(v.number()),          // Current stock level
+  lowStockThreshold: v.optional(v.number()),     // Alert threshold
+
+  // Organization
+  branchId: v.optional(v.id("branches")),       // Optional branch association
+  tags: v.optional(v.array(v.string())),         // Searchable tags
+
+  // Media
+  images: v.optional(v.array(v.string()),       // Array of image URLs
+  featuredImage: v.optional(v.string()),         // Hero image URL
+  coverImage: v.optional(v.string()),            // Cover/banner image
+  documentUrls: v.optional(v.array(v.string())), // Associated documents
+
+  // Specifications
+  specifications: v.optional(v.object({         // Physical specs
+    weight: v.optional(v.number()),
+    dimensions: v.optional(v.object({
+      length: v.optional(v.number()),
+      width: v.optional(v.number()),
+      height: v.optional(v.number()),
+    })),
+    color: v.optional(v.string()),
+    material: v.optional(v.string()),
+    size: v.optional(v.string()),
+  })),
+
+  // BobGo Shipping Integration
+  pickupLocation: v.optional(v.string()),
+  pickupAddress: v.optional(v.string()),
+  pickupPostalCode: v.optional(v.string()),
+  pickupCity: v.optional(v.string()),
+  pickupProvince: v.optional(v.string()),
+  pickupCountry: v.optional(v.string()),
+  showPickupLocation: v.optional(v.boolean()),
+
+  // Additional
+  extraSpecifications: v.optional(v.record(v.string(), v.any())),
+  features: v.optional(v.array(v.string())),
+  showSpecifications: v.optional(v.boolean()),
+
+  // Analytics
+  viewsCount: v.optional(v.number()),
+  purchaseCount: v.optional(v.number()),
+
+  // Metadata
+  schemaVersion: v.string(),
+  createdAt: v.number(),
+  updatedAt: v.number(),
+})
+.index("by_company", ["companyId"])
+.index("by_company_status", ["companyId", "status"])
+.index("by_branch", ["branchId"])
+.index("by_reference", ["reference"])
+.index("by_sku", ["sku"])
+.index("by_active", ["isActive"])
+```
+
+### Product Field Summary
+
+| Field | Required | Type | Description |
+|-------|----------|------|-------------|
+| name | YES | string | Product name |
+| reference | YES | string | Internal SKU/reference |
+| price | YES | number | Selling price |
+| status | YES | string | draft/available/out_of_stock/discontinued |
+| isActive | YES | boolean | Soft delete flag |
+| companyId | YES | Id(companies) | FK to parent company |
+| description | NO | string | Product description |
+| categories | NO | string[] | Array of category names |
+| discountedPrice | NO | number | Sale price |
+| cost | NO | number | Internal cost |
+| sku | NO | string | Stock keeping unit |
+| stockQuantity | NO | number | Current stock |
+| lowStockThreshold | NO | number | Alert threshold |
+| branchId | NO | Id(branches) | Branch association |
+| tags | NO | string[] | Searchable tags |
+| images | NO | string[] | Image URLs |
+| featuredImage | NO | string | Hero image URL |
+| coverImage | NO | string | Cover image URL |
+| documentUrls | NO | string[] | Document URLs |
+| specifications | NO | object | Physical specs |
+| pickupLocation | NO | string | BobGo pickup name |
+| pickupAddress | NO | string | BobGo pickup address |
+| showPickupLocation | NO | boolean | Show on frontend |
+| extraSpecifications | NO | record | Custom fields |
+| features | NO | string[] | Feature list |
+| showSpecifications | NO | boolean | Show on product page |
+| viewsCount | NO | number | View counter |
+| purchaseCount | NO | number | Purchase counter |
+
+### Product Indexes
+- `by_company` - All products for a company
+- `by_company_status` - Products by company and status
+- `by_branch` - Products by branch
+- `by_reference` - Find by reference number
+- `by_sku` - Find by SKU
+- `by_active` - Filter active products
+
+---
+
+## Services Table
+
+```
+services: defineTable({
+  // REQUIRED FIELDS
+  companyId: v.id("companies"),         // Foreign key to companies
+  name: v.string(),                      // Service name
+  price: v.number(),                     // Service price
+  isActive: v.boolean(),                 // Soft delete flag
+
+  // OPTIONAL FIELDS
+  description: v.optional(v.string()),
+  category: v.optional(v.string()),     // Single category name
+  duration: v.optional(v.number()),      // Duration in minutes
+  sortOrder: v.optional(v.number()),     // Display ordering
+
+  // Metadata
+  createdAt: v.number(),
+  updatedAt: v.number(),
+})
+.index("by_company", ["companyId"])
+.index("by_company_active", ["companyId", "isActive"])
+.index("by_category", ["category"])
+```
+
+### Service Field Summary
+
+| Field | Required | Type | Description |
+|-------|----------|------|-------------|
+| companyId | YES | Id(companies) | FK to parent company |
+| name | YES | string | Service name |
+| price | YES | number | Service price |
+| isActive | YES | boolean | Soft delete flag |
+| description | NO | string | Service description |
+| category | NO | string | Category name |
+| duration | NO | number | Duration in minutes |
+| sortOrder | NO | number | Display order |
+
+### Service Indexes
+- `by_company` - All services for a company
+- `by_company_active` - Active services by company
+- `by_category` - Services by category
+
+---
+
+## Relationships
+
+```
+Products → Companies (many-to-one)
+  ├── companyId: v.id("companies")  // Required foreign key
+
+Services → Companies (many-to-one)
+  ├── companyId: v.id("companies")  // Required foreign key
+
+Products → Branches (many-to-one, optional)
+  └── branchId: v.optional(v.id("branches"))
+```
+
+---
+
+## Adding/Editing Products (Mutation Args)
+
+```typescript
+// products.ts create mutation args
+{
+  userId: v.id("users"),
+  companyId: v.id("companies"),
+  name: v.string(),
+  description: v.optional(v.string()),
+  reference: v.string(),
+  categories: v.optional(v.array(v.string())),
+  price: v.number(),
+  discountedPrice: v.optional(v.number()),
+  cost: v.optional(v.number()),
+  sku: v.optional(v.string()),
+  stockQuantity: v.optional(v.number()),
+  lowStockThreshold: v.optional(v.number()),
+  status: v.string(),
+  branchId: v.optional(v.id("branches")),
+  tags: v.optional(v.array(v.string())),
+  images: v.optional(v.array(v.string())),
+  featuredImage: v.optional(v.string()),
+  coverImage: v.optional(v.string()),
+  specifications: v.optional(v.object({...})),
+  pickupLocation: v.optional(v.string()),
+  pickupAddress: v.optional(v.string()),
+  pickupPostalCode: v.optional(v.string()),
+  pickupCity: v.optional(v.string()),
+  pickupProvince: v.optional(v.string()),
+  pickupCountry: v.optional(v.string()),
+  showPickupLocation: v.optional(v.boolean()),
+  features: v.optional(v.array(v.string())),
+  showSpecifications: v.optional(v.boolean()),
+}
+```
+
+---
+
+## Adding/Editing Services (Mutation Args)
+
+```typescript
+// services.ts create mutation args
+{
+  userId: v.id("users"),
+  companyId: v.id("companies"),
+  name: v.string(),
+  description: v.optional(v.string()),
+  category: v.optional(v.string()),
+  price: v.number(),
+  duration: v.optional(v.number()),
+  isActive: v.boolean(),
+  sortOrder: v.optional(v.number()),
+}
+```

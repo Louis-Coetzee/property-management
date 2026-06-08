@@ -1,0 +1,196 @@
+/* Import fallback styles first (imports must come first) */
+@import url('./fallback.css');
+
+/* Import Tailwind v4 */
+@import "tailwindcss";
+
+/* Global background color */
+body {
+  background-color: #ffffff;
+}
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+
+  /* Primary color - #06337a */
+  --primary-rgb: 6, 51, 122;
+  --primary-foreground-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+
+    /* Primary color - #06337a */
+    --primary-rgb: 6, 51, 122;
+    --primary-foreground-rgb: 255, 255, 255;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Custom scrollbar for modal content */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(99, 102, 241, 0.3) transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(99, 102, 241, 0.3);
+    border-radius: 4px;
+    transition: background 0.2s;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(99, 102, 241, 0.5);
+  }
+
+  /* Mobile safe area utilities */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-left {
+    padding-left: env(safe-area-inset-left);
+  }
+
+  .safe-right {
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Custom animations for hero sections */
+  .animate-fade-in-up {
+    animation-name: fadeInUp;
+    animation-timing-function: ease-out;
+    animation-duration: 0.8s;
+    animation-fill-mode: both;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation-name: fadeIn;
+    animation-timing-function: ease-out;
+    animation-duration: 0.6s;
+    animation-fill-mode: both;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Animated border that travels along the edge */
+  .glow-border-wrapper {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .glow-border-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 0.625rem;
+    background: conic-gradient(
+      from var(--border-angle, 0deg),
+      #06023b 0%,
+      #3b82f6 15%,
+      #0ea5e9 30%,
+      #06b6d4 45%,
+      #0284c7 60%,
+      #7c3aed 75%,
+      #06023b 90%,
+      #3b82f6 100%
+    );
+    filter: blur(1px) drop-shadow(0 0 3px rgba(6, 2, 59, 0.4));
+    animation: border-spin 6s linear infinite;
+    z-index: -1;
+  }
+
+  .glow-border-wrapper::after {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    background: white;
+    border-radius: 0.5rem;
+    z-index: -1;
+  }
+
+  @keyframes border-spin {
+    to {
+      --border-angle: 360deg;
+    }
+  }
+
+  @property --border-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  /* Orange glow border wrapper */
+  .glow-border-wrapper-orange {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .glow-border-wrapper-orange::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 0.625rem;
+    background: conic-gradient(
+      from var(--border-angle, 0deg),
+      #f97316 0%,
+      #3b82f6 25%,
+      #10b981 50%,
+      #8b5cf6 75%,
+      #f97316 100%
+    );
+    filter: blur(1px) drop-shadow(0 0 3px rgba(249, 115, 22, 0.3));
+    animation: border-spin 6s linear infinite;
+    z-index: -1;
+  }
+
+  .glow-border-wrapper-orange::after {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    background: white;
+    border-radius: 0.5rem;
+    z-index: -1;
+  }
+}

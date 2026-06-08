@@ -1,0 +1,21 @@
+[
+  {
+    "apps": {
+      "refreshdashboard.vercel.app": {
+        "grantedAt": 1767802080208,
+        "hasAccess": true,
+        "role": "user"
+      }
+    },
+    "contactNumber": "0715186612",
+    "createdAt": 1767802080208,
+    "email": "dumsanintimbane81@gmail.com",
+    "firstName": "Muzikayise Dumisani",
+    "isEmailVerified": true,
+    "lastName": "Ntimbane",
+    "passwordHash": "$2b$12$NHDMEKzvNqBmbSql59JbxO8ca3u3rws3tvqZr8LsUsyV44T97ZaKm",
+    "registeredFromDomain": "refreshdashboard.vercel.app",
+    "requirePasswordChange": false,
+    "updatedAt": 1767802100215
+  }
+]

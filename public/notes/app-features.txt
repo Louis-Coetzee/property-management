@@ -1,0 +1,155 @@
+APP FEATURES OVERVIEW
+=====================
+
+1. BUSINESS TOOLS
+-----------------
+CRM Features:
+- Client Management (full CRUD, contact details, activity status)
+- Lead Management (capture, source tracking, status management, assignment)
+- Sales Pipeline
+- Quote Management (create quotes, line items, tax, status workflow, PDF export)
+- Invoice Management (create from orders/quotes, line items, tax rates, payment recording)
+- Payment Tracking (multiple payment methods: cash, card, eft, bank transfer)
+- Activity Tracking (calls, emails, meetings, video calls, notes, tasks)
+- Team Management (roles: owner, admin, manager, supervisor, member)
+- Branches (multi-location support)
+- Departments (organizational structure)
+- Messaging (team messaging, direct messages, group conversations)
+
+Product & Service Catalog:
+- Products (SKU, stock quantity, pricing, categories, specifications)
+- Services (pricing, duration, categories)
+
+Team & User Features:
+- User Availability (weekly schedule, exclusion dates, timezone)
+- Consultants Management (staff as consultants, hourly rates, availability)
+
+
+2. WEBSITE BUILDER
+-----------------
+Core Features:
+- Multiple Websites (create and manage multiple sites per company)
+- Custom Domains (subdomains and custom domain support)
+- Website Publishing (publish/unpublish, active status)
+- Website Branding (primary color, logo, favicon)
+
+Page Management:
+- Multi-Page Support
+- Page Editor (slug, title, description, content)
+- Home Page Setting
+- Page Ordering (custom sort order)
+
+Form Builder:
+- Custom Forms with dynamic fields
+- Field Types (text, textarea, email, number, tel, url, date, time, radio, checkbox, select, multiselect, file)
+- Field Validation (min/max, regex patterns, required fields)
+- Email Recipients
+- Custom Theming (theme color)
+- Custom Messages
+
+Page Builder Sections:
+- Navbar (logo, links, submenus, CTA button, responsive)
+- Hero Sections (Basic, Modern, Slider, Vehicle Showcase, Dealership)
+- About Sections (Classic, Modern)
+- Contact Section (Basic, Modern)
+- Features Section (Basic, Modern)
+- Testimonials (Classic, Modern)
+- Pricing Section (Basic, Modern)
+- Footer (Basic, Modern)
+- Service Showcase
+- Product Showcase
+- Listings Showcase
+- Logo Ticker
+- AI-Generated Sections
+- Custom Code (HTML/CSS embed)
+- Booking System Section
+- Coming Soon
+
+Page Builder Features:
+- Template Selection
+- Drag & Drop Section Ordering
+- Animation Settings (fade, slide, scale, rotate, flip, blur, bounce)
+- Section Settings (background color, padding, full-width, animations)
+- Responsive Design
+- Custom Pointer
+
+Integrations:
+- Auto Trader Integration
+- Easy Quotes Integration
+
+
+3. ONLINE STORE
+--------------
+Store Management:
+- Product Catalog (images, descriptions, pricing)
+- Product Categories
+- Inventory Management (stock quantity, low stock thresholds, status)
+- SKU Management
+- Product Specifications (weight, dimensions, color, material, size)
+
+Order Management:
+- Order Processing
+- Order Status (pending, processing, shipped, delivered, cancelled, refunded)
+- Customer Information (name, email, phone)
+- Shipping Details (address, city, state, zip, country)
+- Order Items (line items with quantity and pricing)
+- Payment Integration (PayFast, PayPal)
+- Payment Tracking (pending, paid, failed, refunded)
+
+Shipping Features:
+- Shipping Options (multiple methods)
+- Shipping Pricing (fixed price, free shipping)
+- Free Shipping Threshold
+- Estimated Delivery
+- BobGo Integration (real-time rates and tracking)
+- Pickup Location
+
+Checkout Flow:
+- Shopping Cart (cart drawer)
+- Guest Checkout
+- Cart Persistence
+- Checkout Page
+- Order Success Page
+
+Credit System:
+- Credit Balance
+- Credit Purchase (PayFast/PayPal)
+- Credit Tracking
+
+
+4. BOOKING SYSTEM
+----------------
+Appointment Scheduling:
+- Online Booking
+- Service Selection
+- Consultant Selection
+- Date & Time Selection
+- Customer Details (name, email, phone)
+- Booking Notes
+- Booking Status (pending, confirmed, completed, cancelled, no_show)
+- Payment Integration (PayFast/PayPal)
+- Payment Status (pending, paid, failed, refunded)
+
+Service Management:
+- Services Catalog (price and duration)
+- Service Categories
+- Service Pricing
+- Duration Info
+
+Consultant/Staff Management:
+- Consultant Profiles
+- Hourly Rates
+- Availability Schedules (weekly, Mon-Sun)
+- Exclusion Dates (block specific dates)
+- Default Consultant
+- Consultant Services (link services to consultants)
+
+Settings:
+- Payment Settings (PayFast/PayPal configuration)
+- Cash Payments (allow/disallow)
+- Prepayment Option
+
+Customer Features:
+- User Bookings (view own bookings)
+- Booking Confirmation
+- Booking Cancellation

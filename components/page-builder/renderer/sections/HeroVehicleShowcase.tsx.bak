@@ -1,0 +1,393 @@
+'use client';
+
+import type { HeroSectionContent } from '@/types/page-builder';
+import { ArrowRight, Play, Star, Shield, Award, CheckCircle, ChevronRight } from 'lucide-react';
+import { useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import { FormModal } from '@/components/forms/FormModal';
+import { useQuery } from 'convex/react';
+import { api } from '@/convex/_generated/api';
+import { convertConvexForm } from '@/lib/forms';
+
+interface HeroVehicleShowcaseProps {
+  content: HeroSectionContent & {
+    vehicleImage?: string;
+    vehicleName?: string;
+    vehiclePrice?: string;
+    vehicleYear?: string;
+    priceLabel?: string;
+    rating?: number;
+    reviewCount?: string;
+    showReviews?: boolean;
+    showPriceTag?: boolean;
+    showVehicleBadge?: boolean;
+    showPrimaryCta?: boolean;
+    showSecondaryCta?: boolean;
+    showQuickStats?: boolean;
+    showSpecs?: boolean;
+    specs?: Array<{
+      id: string;
+      label: string;
+      value: string;
+    }>;
+    stats?: Array<{
+      id: string;
+      value: string;
+      label: string;
+    }>;
+    badges?: Array<{
+      icon: string;
+      text: string;
+    }>;
+    // New showcase-specific fields
+    tagline?: string;
+    subtitle?: string;
+    accentColor?: string;
+    layoutStyle?: 'centered' | 'split' | 'asymmetric';
+  };
+  settings?: {
+    backgroundColor?: string;
+    padding?: {
+      top?: string;
+      bottom?: string;
+    };
+    fullWidth?: boolean;
+    animation?: {
+      enabled?: boolean;
+      type?: string;
+      duration?: number;
+      delay?: number;
+    };
+  };
+  currentPageSlug?: string;
+  websiteId?: string;
+  templateId?: string;
+  sectionId?: string;
+}
+
+const DEFAULT_STATS = [
+  { id: 'stat1', value: '200+', label: 'Vehicles in Stock' },
+  { id: 'stat2', value: '15+', label: 'Years Experience' },
+  { id: 'stat3', value: '98%', label: 'Happy Customers' },
+];
+
+const DEFAULT_SPECS = [
+  { id: 'spec1', label: 'Engine', value: '1.6L' },
+  { id: 'spec2', label: 'Mileage', value: '45,000 km' },
+  { id: 'spec3', label: 'Transmission', value: 'Automatic' },
+  { id: 'spec4', label: 'Fuel', value: 'Petrol' },
+];
+
+const DEFAULT_BADGES = [
+  { icon: 'shield', text: 'Certified Dealer' },
+  { icon: 'award', text: 'Best Price Guarantee' },
+  { icon: 'check', text: '150-Point Inspection' },
+];
+
+export function HeroVehicleShowcase({ content, settings, currentPageSlug, websiteId }: HeroVehicleShowcaseProps) {
+  const {
+    headline = 'Find Your Perfect Vehicle',
+    subheadline = 'Discover our exceptional collection of quality vehicles at competitive prices',
+    ctaText = 'Browse Inventory',
+    ctaLink = '/inventory',
+    ctaType = 'url',
+    ctaFormId,
+    secondaryCtaText = 'Schedule Test Drive',
+    secondaryCtaLink = '#contact',
+    secondaryCtaType = 'url',
+    backgroundColor = '#0a0a0a',
+    vehicleImage = 'https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=800&q=80',
+    vehicleName = '2024 Premium Sedan',
+    vehiclePrice = '$45,990',
+    vehicleYear = '2024',
+    priceLabel = 'Starting at',
+    rating = 4.9,
+    reviewCount = '500+',
+    showReviews = true,
+    showPriceTag = true,
+    showVehicleBadge = true,
+    showPrimaryCta = true,
+    showSecondaryCta = true,
+    showQuickStats = true,
+    showSpecs = true,
+    specs = DEFAULT_SPECS,
+    stats = DEFAULT_STATS,
+    badges = DEFAULT_BADGES,
+    tagline = 'Featured Vehicle',
+    subtitle = 'Premium Quality • Best Value',
+    accentColor = '#dc2626',
+  } = content;
+
+  const router = useRouter();
+  const pathname = usePathname();
+  const [openFormId, setOpenFormId] = useState<string | null>(null);
+
+  const padding = settings?.padding ?? {};
+  const paddingTop = padding.top ?? '0';
+  const paddingBottom = padding.bottom ?? '0';
+
+  // Fetch the form when formId is set
+  const openFormResult = useQuery(api.forms.getFormByIdPublic, openFormId ? { formId: openFormId as any } : 'skip');
+  const openForm = openFormResult ? convertConvexForm(openFormResult) : null;
+
+  // Handle CTA click
+  const handleCTAClick = (e: React.MouseEvent, type?: string, formId?: string, link?: string) => {
+    const targetCtaType = type || 'url';
+
+    if (targetCtaType === 'form' && formId) {
+      e.preventDefault();
+      setOpenFormId(formId);
+      return;
+    }
+
+    if (targetCtaType === 'page' && link) {
+      e.preventDefault();
+      router.push(link);
+      return;
+    }
+  };
+
+  const getCtaHref = (type?: string, link?: string) => {
+    const targetCtaType = type || 'url';
+    if (targetCtaType === 'url') return link || '#';
+    if (targetCtaType === 'page') return link || '/';
+    return '#';
+  };
+
+  // Icon mapping for badges
+  const getBadgeIcon = (iconName: string) => {
+    const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+      shield: Shield,
+      award: Award,
+      check: CheckCircle,
+      star: Star,
+    };
+    return iconMap[iconName] || Shield;
+  };
+
+  // Render stars
+  const renderStars = (rating: number) => {
+    return Array.from({ length: 5 }, (_, i) => (
+      <Star
+        key={i}
+        className="w-3.5 h-3.5"
+        style={{
+          fill: i < Math.floor(rating) ? accentColor : 'none',
+          color: i < Math.floor(rating) ? accentColor : '#4b5563',
+        }}
+      />
+    ));
+  };
+
+  return (
+    <>
+      <section
+        className="relative overflow-hidden min-h-[90vh] flex items-center"
+        style={{ backgroundColor, paddingTop, paddingBottom }}
+      >
+        {/* Background Gradient */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `radial-gradient(ellipse 80% 50% at 50% -20%, ${accentColor}15 0%, transparent 50%)`,
+            }}
+          />
+          <div
+            className="absolute bottom-0 left-0 right-0 h-1/2"
+            style={{
+              background: `linear-gradient(to top, ${accentColor}08 0%, transparent 100%)`,
+            }}
+          />
+        </div>
+
+        {/* Subtle Grid Pattern */}
+        <div
+          className="absolute inset-0 opacity-[0.02]"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }}
+        />
+
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
+          <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+
+            {/* Left Column - Content */}
+            <div className="lg:col-span-5 order-2 lg:order-1">
+              {/* Tagline */}
+              {tagline && (
+                <div className="inline-flex items-center gap-2 mb-6">
+                  <div
+                    className="w-1.5 h-1.5 rounded-full animate-pulse"
+                    style={{ backgroundColor: accentColor }}
+                  />
+                  <span className="text-xs font-semibold tracking-[0.2em] uppercase text-gray-400">
+                    {tagline}
+                  </span>
+                </div>
+              )}
+
+              {/* Rating Badge */}
+              {showReviews && (
+                <div className="inline-flex items-center gap-3 mb-6 px-4 py-2 rounded-full bg-white/5 border border-white/10">
+                  <div className="flex items-center gap-1">
+                    {renderStars(rating)}
+                  </div>
+                  <span className="text-sm font-semibold text-white">{rating}</span>
+                  <span className="text-xs text-gray-400">({reviewCount} Reviews)</span>
+                </div>
+              )}
+
+              {/* Main Headline */}
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 leading-[1.1] tracking-tight">
+                {headline}
+              </h1>
+
+              {/* Subtitle */}
+              {subtitle && (
+                <p className="text-sm font-medium mb-4 tracking-wide" style={{ color: accentColor }}>
+                  {subtitle}
+                </p>
+              )}
+
+              {/* Subheadline */}
+              <p className="text-base sm:text-lg text-gray-400 mb-8 max-w-md leading-relaxed">
+                {subheadline}
+              </p>
+
+              {/* Vehicle Specs Grid */}
+              {showSpecs && specs && specs.length > 0 && (
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+                  {specs.map((spec) => (
+                    <div key={spec.id} className="bg-white/5 rounded-xl p-3 border border-white/10">
+                      <p className="text-[10px] uppercase tracking-wider text-gray-500 mb-1">{spec.label}</p>
+                      <p className="text-sm font-semibold text-white">{spec.value}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* CTA Buttons */}
+              <div className="flex flex-wrap gap-3 mb-10">
+                {showPrimaryCta && (
+                  <a
+                    href={getCtaHref(ctaType, ctaLink)}
+                    onClick={(e) => handleCTAClick(e, ctaType, ctaFormId, ctaLink)}
+                    className="group inline-flex items-center gap-2 px-6 py-3.5 font-semibold rounded-xl transition-all duration-300 shadow-lg"
+                    style={{
+                      backgroundColor: accentColor,
+                      color: '#ffffff',
+                      boxShadow: `0 10px 40px -10px ${accentColor}50`
+                    }}
+                  >
+                    {ctaText}
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </a>
+                )}
+
+                {showSecondaryCta && (
+                  <a
+                    href={getCtaHref(secondaryCtaType, secondaryCtaLink)}
+                    onClick={(e) => handleCTAClick(e, secondaryCtaType, undefined, secondaryCtaLink)}
+                    className="group inline-flex items-center gap-2 px-6 py-3.5 font-semibold rounded-xl bg-white/10 text-white border border-white/20 hover:bg-white/15 transition-all duration-300"
+                  >
+                    <Play className="w-4 h-4" style={{ color: accentColor }} />
+                    {secondaryCtaText}
+                  </a>
+                )}
+              </div>
+
+              {/* Trust Badges */}
+              {badges && badges.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {badges.map((badge, index) => {
+                    const Icon = getBadgeIcon(badge.icon);
+                    return (
+                      <div
+                        key={index}
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10"
+                      >
+                        <Icon className="w-3.5 h-3.5" style={{ color: accentColor }} />
+                        <span className="text-xs font-medium text-gray-300">{badge.text}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Center - Vehicle Image (Spans 7 columns) */}
+            <div className="lg:col-span-7 order-1 lg:order-2 relative">
+              {/* Decorative Elements */}
+              <div className="absolute inset-0 pointer-events-none">
+                {/* Glow behind vehicle */}
+                <div
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[60%] rounded-full blur-3xl"
+                  style={{ backgroundColor: `${accentColor}20` }}
+                />
+              </div>
+
+              {/* Vehicle Image - No card, just the image */}
+              <div className="relative">
+                <img
+                  src={vehicleImage}
+                  alt={vehicleName}
+                  className="w-full h-auto object-contain max-h-[50vh] lg:max-h-[60vh] mx-auto drop-shadow-2xl"
+                  style={{ filter: 'drop-shadow(0 25px 50px rgba(0,0,0,0.5))' }}
+                />
+
+                {/* Floating Price Badge */}
+                {showPriceTag && (
+                  <div className="absolute bottom-4 right-4 lg:bottom-8 lg:right-8 bg-white rounded-2xl shadow-2xl p-5 border border-gray-100">
+                    <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">{priceLabel}</p>
+                    <p className="text-3xl font-bold text-gray-900">{vehiclePrice}</p>
+                    <p className="text-xs text-gray-400 mt-1">{vehicleYear} Model</p>
+                  </div>
+                )}
+
+                {/* Vehicle Name Badge */}
+                {showVehicleBadge && (
+                  <div className="absolute top-4 left-4 lg:top-8 lg:left-8 bg-white/95 backdrop-blur-sm rounded-full px-5 py-2.5 shadow-xl border border-gray-100">
+                    <p className="text-sm font-bold text-gray-900">{vehicleName}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Stats Bar */}
+          {showQuickStats && stats && stats.length > 0 && (
+            <div className="mt-16 pt-8 border-t border-white/10">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 lg:gap-8">
+                {stats.map((stat, index) => (
+                  <div key={stat.id} className="text-center lg:text-left">
+                    <p
+                      className="text-3xl sm:text-4xl font-bold text-white mb-1"
+                      style={{ textShadow: `0 0 30px ${accentColor}30` }}
+                    >
+                      {stat.value}
+                    </p>
+                    <p className="text-sm text-gray-500">{stat.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Bottom Gradient Fade */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent pointer-events-none" />
+      </section>
+
+      {/* Form Modal */}
+      {openForm && (
+        <FormModal
+          form={openForm}
+          isOpen={!!openFormId}
+          onClose={() => setOpenFormId(null)}
+          sourcePage={currentPageSlug}
+        />
+      )}
+    </>
+  );
+}

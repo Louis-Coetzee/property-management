@@ -1,0 +1,207 @@
+# Google Reviews Section - Plan of Action
+
+## Overview
+Add a new Google Reviews section type to the website builder that pulls and displays Google Places reviews on published websites.
+
+---
+
+## Phase 1: Data Layer
+
+### 1.1 Add Section Type
+**File:** `types/page-builder.ts`
+- Add `'google-reviews'` to the `SectionType` union type
+- Add `GoogleReviewsSectionContent` interface
+
+```typescript
+interface GoogleReviewsSectionContent {
+  placeId: string;           // Google Places ID
+  displayCount: number;     // Number of reviews to show (default: 5)
+  style: 'grid' | 'carousel' | 'list';
+  showRating: boolean;      // Show star rating
+  showDate: boolean;        // Show review date
+  showText: boolean;        // Show review text snippet
+  textLength: number;       // Max characters for review text
+  title: string;           // Section title
+  subtitle: string;        // Section subtitle
+}
+```
+
+---
+
+## Phase 2: Backend API
+
+### 2.1 Create Google Reviews API Route
+**File:** `app/api/google-reviews/route.ts`
+
+- Create Next.js API route that proxies Google Places API
+- Inputs: `placeId`, `apiKey`
+- Outputs: Cached reviews data
+- Implements:
+  - Google Places API call to fetch reviews
+  - Response caching (1 hour TTL)
+  - Rate limiting protection
+  - Error handling
+
+### 2.2 API Key Storage
+- Store Google API key in environment variable: `GOOGLE_PLACES_API_KEY`
+- Never expose key to frontend
+
+---
+
+## Phase 3: Renderer Component
+
+### 3.1 Create GoogleReviewsRenderer
+**File:** `components/page-builder/renderer/sections/GoogleReviewsRenderer.tsx`
+
+- Props: `content: GoogleReviewsSectionContent`, `settings`, `websiteId`
+- Fetches reviews from `/api/google-reviews` on mount
+- Handles loading, error, and empty states
+- Renders reviews in selected style (grid/carousel/list)
+- Shows Google logo per Google's display requirements
+
+### 3.2 Rendering Features
+- Star rating display (filled/empty stars)
+- Reviewer name and avatar (if available)
+- Relative date ("2 weeks ago")
+- Review text with "Read more" truncation
+- Google branding/logo as required by Google
+- Responsive layout for mobile/desktop
+
+---
+
+## Phase 4: Editor Component
+
+### 4.1 Create GoogleReviewsEditor
+**File:** `components/page-builder/builder/sections/GoogleReviewsEditor.tsx`
+
+**Fields:**
+- Place ID input with instructions link
+- Display count slider (1-10)
+- Style selector (grid/carousel/list)
+- Toggle options (show rating, date, text)
+- Text length input
+- Title and subtitle inputs
+- Preview of how it will look
+
+**Validation:**
+- Place ID format validation
+- Test connection button to verify Place ID
+
+---
+
+## Phase 5: Registration
+
+### 5.1 Add to Template Registry
+**File:** `lib/page-builder/registry.ts`
+
+```typescript
+'google-reviews': {
+  renderer: 'GoogleReviewsRenderer',
+  editor: 'GoogleReviewsEditor',
+  defaultContent: { ... },
+  category: 'social-proof',  // or new category
+}
+```
+
+### 5.2 Add to PageRenderer
+**File:** `components/page-builder/renderer/PageRenderer.tsx`
+
+- Import and dynamically load GoogleReviewsRenderer
+- Add to TEMPLATE_COMPONENTS mapping
+
+### 5.3 Add to Section Selector
+**File:** `components/page-builder/builder/AddSectionModal.tsx`
+
+- Add "Google Reviews" to CategoryStep
+- Add template options in TemplateStep (different styles)
+
+---
+
+## Phase 6: Styling & Polish
+
+### 6.1 Default Styles
+- Grid: 3 columns on desktop, 1 on mobile
+- Carousel: Auto-scroll with dots navigation
+- List: Compact single-column layout
+
+### 6.2 Color Theming
+- Respect accent color from website settings
+- Star rating color: gold/amber
+- Text colors from palette
+
+---
+
+## Phase 7: Edge Cases & Error Handling
+
+### 7.1 No Reviews
+- Show friendly message
+- Suggest checking Place ID
+
+### 7.2 API Errors
+- Graceful fallback message
+- Retry button
+- Cached data if available
+
+### 7.3 Invalid Place ID
+- Validation error in editor
+- Clear instructions on how to find Place ID
+
+### 7.4 Rate Limiting
+- Implement client-side caching
+- Show "reviews temporarily unavailable" if rate limited
+
+---
+
+## Phase 8: Google Compliance
+
+### 8.1 Required Branding
+- Display "Powered by Google" badge
+- Link to Google Places page
+- Don't modify review content
+- Attribute reviews to reviewers
+
+### 8.2 Display Requirements
+- Show minimum rating if displaying aggregate rating
+- Don't filter out negative reviews
+- Include review date
+
+---
+
+## Files to Create/Modify
+
+### Create:
+- `app/api/google-reviews/route.ts`
+- `components/page-builder/renderer/sections/GoogleReviewsRenderer.tsx`
+- `components/page-builder/builder/sections/GoogleReviewsEditor.tsx`
+- `notes/google-reviews-plan.txt` (this file)
+
+### Modify:
+- `types/page-builder.ts` - Add type and interface
+- `lib/page-builder/registry.ts` - Register section
+- `components/page-builder/renderer/PageRenderer.tsx` - Add mapping
+- `components/page-builder/builder/AddSectionModal.tsx` - Add to UI
+
+### Environment:
+- Add `GOOGLE_PLACES_API_KEY` to `.env.local`
+
+---
+
+## Implementation Order
+
+1. **Types** - Define the data structure
+2. **API Route** - Backend proxy for Google API
+3. **Renderer** - Display reviews on frontend
+4. **Registry** - Register the section
+5. **PageRenderer** - Wire up rendering
+6. **Editor** - Allow editing configuration
+7. **AddSectionModal** - Add to section picker
+8. **Testing** - Full integration test
+
+---
+
+## Notes
+
+- Google Places API has free tier: 1000 requests/month
+- Reviews data should be cached server-side
+- Consider adding manual testimonial fallback option
+- Future: Could add other review sources (Yelp, Facebook, etc.)
