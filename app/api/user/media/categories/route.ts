@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ConvexHttpClient } from "convex/browser";
+import { getConvexClient } from "@/lib/convex-http";
 import { api } from "@/convex/_generated/api";
 import { addCorsHeaders, handleCorsOptions } from "@/lib/cors";
 
-const convex = new ConvexHttpClient(process.env.CONVEX_URL!);
-
-// Helper function to get user from session token
-async function getUserFromToken(token: string) {
+async function getUserFromToken(token: string, convex: ReturnType<typeof getConvexClient>) {
   try {
     const user = await convex.query(api.auth.getUserBySession, { sessionToken: token });
     return user;
@@ -39,6 +36,7 @@ function getSessionToken(request: NextRequest): string | undefined {
 // GET - Fetch all categories for the authenticated user
 export async function GET(request: NextRequest) {
   try {
+    const convex = getConvexClient();
     const sessionToken = getSessionToken(request);
 
     if (!sessionToken) {
@@ -48,7 +46,7 @@ export async function GET(request: NextRequest) {
       ), request);
     }
 
-    const user = await getUserFromToken(sessionToken);
+    const user = await getUserFromToken(sessionToken, convex);
 
     if (!user) {
       return addCorsHeaders(NextResponse.json(
@@ -76,6 +74,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const convex = getConvexClient();
     const sessionToken = getSessionToken(request);
 
     if (!sessionToken) {
@@ -85,7 +84,7 @@ export async function POST(request: NextRequest) {
       ), request);
     }
 
-    const user = await getUserFromToken(sessionToken);
+    const user = await getUserFromToken(sessionToken, convex);
 
     if (!user) {
       return addCorsHeaders(NextResponse.json(

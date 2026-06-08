@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { ConvexHttpClient } from 'convex/browser';
+import { getConvexClient } from '@/lib/convex-http';
 import { api } from '@/convex/_generated/api';
 
 interface ShippingOptionData {
@@ -30,8 +30,6 @@ interface BobGoRateRequest {
   }>;
 }
 
-const convex = new ConvexHttpClient(process.env.CONVEX_URL!);
-
 interface BobGoCredentials {
   apiKey: string;
   apiSecret: string;
@@ -44,7 +42,7 @@ interface BobGoUserCredentials {
   password: string;
 }
 
-async function getBobGoCredentials(): Promise<BobGoCredentials | null> {
+async function getBobGoCredentials(convex: ReturnType<typeof getConvexClient>): Promise<BobGoCredentials | null> {
   try {
     console.log('[BOBGO] Fetching BobGo credentials from Convex...');
     const bobgoIntegration = await convex.query(api.integrations.getBobgoSettings);
@@ -91,7 +89,7 @@ async function getBobGoCredentials(): Promise<BobGoCredentials | null> {
   }
 }
 
-async function getShippingOption(shippingOptionId: string): Promise<ShippingOptionData | null> {
+async function getShippingOption(shippingOptionId: string, convex: ReturnType<typeof getConvexClient>): Promise<ShippingOptionData | null> {
   try {
     console.log('[BOBGO] Fetching shipping option:', shippingOptionId);
     const shippingOption = await convex.query(api.orders.getShippingOptionByIdPublic, {
@@ -115,7 +113,7 @@ async function getShippingOption(shippingOptionId: string): Promise<ShippingOpti
   }
 }
 
-async function getBobGoUserCredentials(): Promise<BobGoUserCredentials | null> {
+async function getBobGoUserCredentials(convex: ReturnType<typeof getConvexClient>): Promise<BobGoUserCredentials | null> {
   try {
     const bobgoIntegration = await convex.query(api.integrations.getBobgoSettings);
     
@@ -403,6 +401,7 @@ function extractPriceFromRates(ratesData: any): number {
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
+    const convex = getConvexClient();
     console.log('\n========== BOBGO RATE CALCULATION STARTED ==========');
     const body: BobGoRateRequest = await request.json();
     console.log('[BOBGO] Request body:', JSON.stringify(body, null, 2));
@@ -428,7 +427,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    const shippingOption = await getShippingOption(shippingOptionId);
+    const shippingOption = await getShippingOption(shippingOptionId, convex);
     if (!shippingOption || shippingOption.shippingType !== 'bobgo') {
       console.log('[BOBGO] Shipping option not found or not BobGo type');
       return NextResponse.json(
@@ -437,7 +436,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    const credentials = await getBobGoCredentials();
+    const credentials = await getBobGoCredentials(convex);
     if (!credentials) {
       console.log('[BOBGO] No credentials found');
       return NextResponse.json(

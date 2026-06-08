@@ -1,16 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { addCorsHeaders, handleCorsOptions } from '@/lib/cors';
 import { api } from '@/convex/_generated/api';
-import { ConvexHttpClient } from 'convex/browser';
+import { getConvexClient } from '@/lib/convex-http';
 import { Id } from '@/convex/_generated/dataModel';
-
-const convex = new ConvexHttpClient(process.env.CONVEX_URL!);
 
 export async function OPTIONS(request: NextRequest) {
   return handleCorsOptions(request);
 }
 
 export async function POST(request: NextRequest) {
+  const convex = getConvexClient();
   try {
     console.log('🚀 [Admin Update User] Request started');
     

@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ConvexHttpClient } from "convex/browser";
+import { getConvexClient } from "@/lib/convex-http";
 import { api } from "@/convex/_generated/api";
 
-const convex = new ConvexHttpClient(process.env.CONVEX_URL!);
-
 export async function POST(request: NextRequest) {
+  const convex = getConvexClient();
   try {
     const sessionToken = request.cookies.get("session")?.value;
 

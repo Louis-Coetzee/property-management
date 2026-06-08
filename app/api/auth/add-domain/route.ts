@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ConvexHttpClient } from "convex/browser";
+import { getConvexClient } from "@/lib/convex-http";
 import { api } from "@/convex/_generated/api";
 import { addCorsHeaders, handleCorsOptions } from "@/lib/cors";
 
-const convex = new ConvexHttpClient(process.env.CONVEX_URL!);
-
 export async function POST(request: NextRequest) {
+  const convex = getConvexClient();
   try {
     const body = await request.json();
     const { email, password, domain } = body;

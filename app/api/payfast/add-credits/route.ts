@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { ConvexHttpClient } from 'convex/browser';
+import { getConvexClient } from '@/lib/convex-http';
 import { api } from '@/convex/_generated/api';
 import * as crypto from 'crypto';
-
-const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 function generateTransactionId(): string {
   return `CREDIT-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
@@ -11,6 +9,7 @@ function generateTransactionId(): string {
 
 export async function POST(request: NextRequest) {
   try {
+    const convex = getConvexClient();
     let body;
     try {
       body = await request.json();

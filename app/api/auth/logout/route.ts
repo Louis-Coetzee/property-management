@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ConvexHttpClient } from "convex/browser";
+import { getConvexClient } from "@/lib/convex-http";
 import { api } from "@/convex/_generated/api";
 import { addCorsHeaders, handleCorsOptions } from "@/lib/cors";
 
-const convex = new ConvexHttpClient(process.env.CONVEX_URL!);
-
 export async function POST(request: NextRequest) {
+  const convex = getConvexClient();
   try {
     // Try to get session token from Authorization header first, then cookie
     const authHeader = request.headers.get('authorization');

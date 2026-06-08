@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { ConvexHttpClient } from 'convex/browser';
+import { getConvexClient } from '@/lib/convex-http';
 import { api } from '@/convex/_generated/api';
 
 const primaryDomainCache = new Map<string, { domain: string | null; timestamp: number }>();
@@ -13,7 +13,7 @@ async function getPrimaryDomain(domain: string): Promise<string | null> {
   }
 
   try {
-    const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+    const convex = getConvexClient();
     const website = await convex.query(api.websites.getWebsiteByDomainPublic, { domain });
     
     let primaryDomain: string | null = null;

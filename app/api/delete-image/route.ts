@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { ConvexHttpClient } from 'convex/browser';
+import { getConvexClient } from '@/lib/convex-http';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 import { deleteImageFromCloudflare } from '@/lib/cloudflare-images';
 import { getR2Client } from '@/lib/cloudflare-r2';
 
-const convex = new ConvexHttpClient(process.env.CONVEX_URL!);
-
 export async function DELETE(request: NextRequest) {
   try {
+    const convex = getConvexClient();
     console.log('🗑️ Delete image API called');
 
     // Get session token from cookies or headers

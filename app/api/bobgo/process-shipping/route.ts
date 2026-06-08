@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { ConvexHttpClient } from 'convex/browser';
+import { getConvexClient } from '@/lib/convex-http';
 import { api } from '@/convex/_generated/api';
-
-const convex = new ConvexHttpClient(process.env.CONVEX_URL!);
 
 interface ProcessShippingRequest {
   orderId: string;
@@ -20,7 +18,7 @@ interface ProcessShippingRequest {
   creditAmount?: number;
 }
 
-async function getBobGoCredentials() {
+async function getBobGoCredentials(convex: ReturnType<typeof getConvexClient>) {
   try {
     const bobgoIntegration = await convex.query(api.integrations.getBobgoSettings);
     
@@ -58,7 +56,7 @@ async function getBobGoCredentials() {
   }
 }
 
-async function getShippingOption(companyId: string) {
+async function getShippingOption(companyId: string, convex: ReturnType<typeof getConvexClient>) {
   try {
     const shippingOptions = await convex.query(api.orders.getShippingOptionsPublic, {
       companyId,
@@ -92,10 +90,11 @@ function findSuccessfulRate(ratesData: any): { rate: any; providerSlug: string }
 
 export async function POST(request: NextRequest) {
   try {
+    const convex = getConvexClient();
     const body: ProcessShippingRequest = await request.json();
     console.log('[SHIPPING] Processing shipping for order:', body.orderNumber);
     
-    const credentials = await getBobGoCredentials();
+    const credentials = await getBobGoCredentials(convex);
     if (!credentials) {
       return NextResponse.json(
         { error: 'BobGo integration not configured' },
@@ -105,7 +104,7 @@ export async function POST(request: NextRequest) {
     
     const { apiKey, baseUrl } = credentials;
     
-    const shippingOption = await getShippingOption(body.companyId);
+    const shippingOption = await getShippingOption(body.companyId, convex);
     if (!shippingOption) {
       return NextResponse.json(
         { error: 'No BobGo shipping option configured' },

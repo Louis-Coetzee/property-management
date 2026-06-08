@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ConvexHttpClient } from "convex/browser";
+import { getConvexClient } from "@/lib/convex-http";
 import { api } from "@/convex/_generated/api";
 import * as crypto from "crypto";
 import { sendOrderConfirmationEmail, sendAdminOrderNotification } from "@/lib/email";
-
-const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 function generateSignature(data: Record<string, string>, passphrase?: string): string {
   // PayFast requires specific parameter order for signature
@@ -35,6 +33,7 @@ function generateSignature(data: Record<string, string>, passphrase?: string): s
 
 export async function POST(request: NextRequest) {
   try {
+    const convex = getConvexClient();
     const formData = await request.formData();
     const data: Record<string, string> = {};
     

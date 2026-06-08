@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { ConvexHttpClient } from "convex/browser";
+import { getConvexClient } from '@/lib/convex-http';
 import { api } from '@/convex/_generated/api';
 
 export const dynamic = 'force-dynamic';
@@ -74,7 +74,7 @@ export async function GET(
 }
 
 async function getWebsiteData(domain: string) {
-  const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+  const convex = getConvexClient();
   
   try {
     const website = await convex.query(api.websites.getWebsiteByDomainPublic, { domain });

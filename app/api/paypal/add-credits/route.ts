@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { ConvexHttpClient } from 'convex/browser';
+import { getConvexClient } from '@/lib/convex-http';
 import { api } from '@/convex/_generated/api';
-
-const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 export async function POST(request: NextRequest) {
   try {
+    const convex = getConvexClient();
     const { companyId, amount, currency = 'ZAR', userId } = await request.json();
 
     if (!companyId || !amount || amount < 50) {

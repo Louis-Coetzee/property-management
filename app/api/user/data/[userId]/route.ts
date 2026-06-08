@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ConvexHttpClient } from "convex/browser";
+import { getConvexClient } from "@/lib/convex-http";
 import { api } from "@/convex/_generated/api";
 import { addCorsHeaders, handleCorsOptions } from "@/lib/cors";
 import { Id } from "@/convex/_generated/dataModel";
 
-const convex = new ConvexHttpClient(process.env.CONVEX_URL!);
-
-async function getCurrentUser(request: NextRequest) {
+async function getCurrentUser(request: NextRequest, convex: ReturnType<typeof getConvexClient>) {
   const sessionCookie = request.cookies.get('session');
   if (!sessionCookie) return null;
   
@@ -28,6 +26,7 @@ export async function GET(
   { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
+    const convex = getConvexClient();
     const { userId } = await params;
 
     if (!userId) {
@@ -40,7 +39,7 @@ export async function GET(
       );
     }
 
-    const currentUser = await getCurrentUser(request);
+    const currentUser = await getCurrentUser(request, convex);
     
     if (!currentUser) {
       return addCorsHeaders(

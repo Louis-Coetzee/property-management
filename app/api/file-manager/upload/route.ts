@@ -1,15 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { ConvexHttpClient } from "convex/browser";
+import { getConvexClient } from "@/lib/convex-http";
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 import { cloudflareImagesClient } from '@/lib/cloudflare-images';
 import { getR2Client, isImageFile, isDocumentFile, getContentType } from '@/lib/cloudflare-r2';
 import { addCorsHeaders, handleCorsOptions } from '@/lib/cors';
 
-const convex = new ConvexHttpClient(process.env.CONVEX_URL!);
-
-// Helper function to get user from session token
-async function getUserFromToken(token: string) {
+async function getUserFromToken(token: string, convex: ReturnType<typeof getConvexClient>) {
   try {
     const user = await convex.query(api.auth.getUserBySession, { sessionToken: token });
     return user;
@@ -21,6 +18,7 @@ async function getUserFromToken(token: string) {
 
 export async function POST(request: NextRequest) {
   try {
+    const convex = getConvexClient();
     console.log('🔄 File Manager: Starting file upload...');
 
     // Get authentication from headers or cookies
@@ -43,7 +41,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get user from session
-    const user = await getUserFromToken(token);
+    const user = await getUserFromToken(token, convex);
     if (!user) {
       return addCorsHeaders(NextResponse.json({ error: 'Invalid session' }, { status: 401 }), request);
     }

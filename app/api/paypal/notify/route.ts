@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ConvexHttpClient } from "convex/browser";
+import { getConvexClient } from "@/lib/convex-http";
 import { api } from "@/convex/_generated/api";
 import { sendOrderConfirmationEmail, sendAdminOrderNotification } from "@/lib/email";
 
-const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
-
 export async function POST(request: NextRequest) {
   try {
+    const convex = getConvexClient();
     const body = await request.text();
     const params = new URLSearchParams(body);
     

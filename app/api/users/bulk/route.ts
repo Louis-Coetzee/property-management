@@ -1,21 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { addCorsHeaders, handleCorsOptions } from '@/lib/cors';
 import { api } from '@/convex/_generated/api';
-import { ConvexHttpClient } from 'convex/browser';
+import { getConvexClient } from '@/lib/convex-http';
 import { Id } from '@/convex/_generated/dataModel';
-
-// Force ensure Convex client is properly initialized
-const convexUrl = process.env.CONVEX_URL;
-if (!convexUrl) {
-  throw new Error('CONVEX_URL environment variable is not set');
-}
-const convex = new ConvexHttpClient(convexUrl);
 
 export async function OPTIONS(request: NextRequest) {
   return handleCorsOptions(request);
 }
 
 export async function POST(request: NextRequest) {
+  const convex = getConvexClient();
   console.log('🚀 [Bulk User Data] POST endpoint hit');
   console.log('🚀 [Bulk User Data] Request URL:', request.url);
   console.log('🚀 [Bulk User Data] Request method:', request.method);

@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ConvexHttpClient } from "convex/browser";
+import { getConvexClient } from "@/lib/convex-http";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { addCorsHeaders, handleCorsOptions } from "@/lib/cors";
 
-const convex = new ConvexHttpClient(process.env.CONVEX_URL!);
-
 export async function GET(request: NextRequest) {
   try {
+    const convex = getConvexClient();
     // Try multiple ways to get session token
     let sessionToken = request.cookies.get("sessionToken")?.value || 
                        request.cookies.get("session")?.value ||
@@ -65,6 +64,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const convex = getConvexClient();
     // Try multiple ways to get session token
     let sessionToken = request.cookies.get("sessionToken")?.value || 
                        request.cookies.get("session")?.value ||
