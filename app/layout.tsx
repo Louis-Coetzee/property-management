@@ -5,7 +5,6 @@ import { CartProvider } from '@/context/CartContext';
 import { CurrencyProvider } from '@/context/CurrencyContext';
 import { RootConvexProvider } from '@/components/platform/RootConvexProvider';
 import { RootAuthProvider } from '@/components/platform/RootAuthProvider';
-import PlatformNavbar from '@/components/platform/PlatformNavbar';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -48,7 +47,6 @@ export default function RootLayout({
           <RootAuthProvider>
             <CurrencyProvider>
               <CartProvider>
-                <PlatformNavbar />
                 {children}
               </CartProvider>
             </CurrencyProvider>

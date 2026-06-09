@@ -42,6 +42,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar as CalendarComponent } from '@/components/ui/calendar-client';
 import { format } from 'date-fns';
 import toast from 'react-hot-toast';
+import PlatformNavbar from '@/components/platform/PlatformNavbar';
 
 const ITEMS_PER_PAGE = 12;
 const LOAD_MORE_COUNT = 8;
@@ -350,6 +351,7 @@ export default function HomePage() {
       `}</style>
 
       <div className="min-h-screen bg-stone-50 sans">
+        <PlatformNavbar />
 
         <main>
           {/* Hero with Search */}
