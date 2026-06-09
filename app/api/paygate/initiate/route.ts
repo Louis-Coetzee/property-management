@@ -90,8 +90,8 @@ export async function POST(request: NextRequest) {
     }
 
     const requestData = createPaygateInitiateRequest({
-      payGateId: paygateConfig.liveMode ? paygateConfig.payGateId : PAYGATE_TEST_CREDENTIALS.payGateId,
-      encryptionKey: paygateConfig.liveMode ? paygateConfig.encryptionKey : PAYGATE_TEST_CREDENTIALS.encryptionKey,
+      payGateId: paygateConfig.liveMode ? (paygateConfig.payGateId || '') : PAYGATE_TEST_CREDENTIALS.payGateId,
+      encryptionKey: paygateConfig.liveMode ? (paygateConfig.encryptionKey || '') : PAYGATE_TEST_CREDENTIALS.encryptionKey,
       returnUrl,
       notifyUrl: `${process.env.NEXT_PUBLIC_URL}/api/paygate/notify`,
       amount,
@@ -138,7 +138,7 @@ export async function POST(request: NextRequest) {
       payRequestId: responseData.PAY_REQUEST_ID,
       checksum: responseData.CHECKSUM,
       processUrl: paygateUrls.processUrl,
-      payGateId: paygateConfig.liveMode ? paygateConfig.payGateId : PAYGATE_TEST_CREDENTIALS.payGateId
+      payGateId: paygateConfig.liveMode ? (paygateConfig.payGateId || '') : PAYGATE_TEST_CREDENTIALS.payGateId
     });
 
   } catch (error) {
