@@ -197,7 +197,7 @@ function generateEmailTemplate(
   `;
 }
 
-// Generate email template with Refresh Tech logo - hardcoded for this deployment
+// Generate email template with Find Accommodation logo - hardcoded for this deployment
 function generateRefreshTechEmailTemplate(content: string, primaryColor: string, secondaryColor: string) {
   return `
     <!DOCTYPE html>
@@ -205,14 +205,14 @@ function generateRefreshTechEmailTemplate(content: string, primaryColor: string,
     <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Refresh Tech</title>
+      <title>Find Accommodation</title>
     </head>
     <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8fafc;">
       <div style="background-color: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-        <!-- Header with Refresh Tech logo - white background -->
+        <!-- Header with Find Accommodation logo - white background -->
         <div style="background: white; padding: 30px 20px; text-align: center; border-bottom: 1px solid #e2e8f0;">
           <div style="font-size: 32px; font-weight: bold; margin: 0;">
-            <span style="color: ${primaryColor};">Refresh</span> <span style="color: ${secondaryColor};">Tech</span>
+            <span style="color: ${primaryColor};">Find</span> <span style="color: ${secondaryColor};">Accommodation</span>
           </div>
         </div>
 
@@ -224,7 +224,7 @@ function generateRefreshTechEmailTemplate(content: string, primaryColor: string,
         <!-- Footer -->
         <div style="background-color: #f1f5f9; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0;">
           <p style="margin: 0; color: ${secondaryColor}; font-size: 14px;">
-            This email was sent by Refresh Tech
+            This email was sent by Find Accommodation
           </p>
         </div>
       </div>
@@ -257,10 +257,10 @@ export async function sendVerificationEmail(data: EmailVerificationData) {
 
   console.log('📧 [EMAIL DEBUG] Verification URL:', verificationUrl);
 
-  // Use Refresh Tech branding - hardcoded for this deployment
+  // Use Find Accommodation branding - hardcoded for this deployment
   const primaryColor = '#308a29';
   const secondaryColor = '#6e6e6e';
-  const companyName = 'Refresh Tech';
+  const companyName = 'Find Accommodation';
 
   const content = `
     <h2 style="color: #333; margin-top: 0;">Hello ${data.firstName}!</h2>
@@ -356,10 +356,10 @@ export async function sendPasswordResetEmail(data: PasswordResetData) {
 
   console.log('📧 [EMAIL DEBUG] Password reset URL:', resetUrl);
 
-  // Use Refresh Tech branding - hardcoded for this deployment
+  // Use Find Accommodation branding - hardcoded for this deployment
   const primaryColor = '#308a29';
   const secondaryColor = '#6e6e6e';
-  const companyName = 'Refresh Tech';
+  const companyName = 'Find Accommodation';
 
   const content = `
     <h2 style="color: #333; margin-top: 0;">Hello ${data.firstName}!</h2>

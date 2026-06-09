@@ -86,7 +86,7 @@ export function AccommodationLandingPage({ domain }: { domain: string }) {
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center gap-2">
               <Link href={`/${domain}`} className="flex-shrink-0 flex items-center gap-2 group">
-                <span className="text-2xl font-bold"><span className="text-blue-600">Property</span> <span className="text-slate-500">Manager</span></span>
+                        <span className="text-2xl font-bold"><span className="text-green-600">Find</span> <span className="text-slate-500">Accommodation</span></span>
               </Link>
             </div>
 
@@ -138,7 +138,7 @@ export function AccommodationLandingPage({ domain }: { domain: string }) {
                   <div className="flex flex-col h-full px-4 py-6">
                     <div className="flex items-center justify-between mb-6">
                       <div className="flex items-center gap-2">
-                        <span className="text-2xl font-bold"><span className="text-blue-600">Property</span> <span className="text-slate-500">Manager</span></span>
+                <span className="text-2xl font-bold"><span className="text-green-600">Find</span> <span className="text-slate-500">Accommodation</span></span>
                       </div>
                     </div>
                     <nav className="flex-1 space-y-1">
@@ -202,13 +202,13 @@ export function AccommodationLandingPage({ domain }: { domain: string }) {
               Accommodation Management Platform
             </div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-              Manage Your Properties
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
-                All in One Place
+              Find Your Perfect
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400">
+                Accommodation
               </span>
             </h1>
             <p className="text-lg sm:text-xl text-slate-300 max-w-2xl mx-auto mb-10">
-              The complete solution for accommodation providers. Manage bookings, guests, payments, and grow your property business — all from a single platform.
+              Discover premium lodges, boutique hotels, and holiday homes. Book your perfect stay or manage your accommodation business — all from one platform.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
@@ -284,9 +284,9 @@ export function AccommodationLandingPage({ domain }: { domain: string }) {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href={`/auth/register`}
-              className="inline-flex items-center gap-2 px-8 py-4 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition-all duration-200 shadow-lg hover:shadow-xl"
             >
-              Start Free
+              Get Started
               <ArrowRight className="h-5 w-5" />
             </Link>
           </div>
@@ -298,14 +298,14 @@ export function AccommodationLandingPage({ domain }: { domain: string }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <span className="text-2xl font-bold"><span className="text-blue-500">Property</span> <span className="text-white">Manager</span></span>
+              <span className="text-2xl font-bold"><span className="text-green-500">Find</span> <span className="text-white">Accommodation</span></span>
             </div>
             <div className="flex items-center gap-6 text-slate-400 text-sm">
               <Link href={`/${domain}/privacy`} className="hover:text-white transition-colors">Privacy Policy</Link>
               <Link href={`/${domain}/terms`} className="hover:text-white transition-colors">Terms of Service</Link>
             </div>
             <p className="text-slate-500 text-sm">
-              &copy; 2025 PropertyManager. All rights reserved.
+              &copy; 2025 Find Accommodation. All rights reserved.
             </p>
           </div>
         </div>
