@@ -128,7 +128,28 @@ INFRASTRUCTURE FIXES:
   ✅ pnpm-lock.yaml updated for Vercel deployment
 
 ================================================================================
- STAGE 4: API ROUTES + LIB
+ STAGE 4A: AUTH PAGES FOR PLATFORM DOMAIN
+ Status: ✅ COMPLETE
+================================================================================
+
+Root-level auth pages using PM's existing auth API routes:
+  ✅ app/auth/login/page.tsx — login with sessionToken in localStorage
+  ✅ app/auth/register/page.tsx — registration with existing user detection
+  ✅ app/auth/forgot-password/page.tsx — password reset email
+  ✅ app/auth/reset-password/page.tsx — password reset form (Convex action)
+  ✅ app/auth/verify-email/page.tsx — email verification (Convex mutation)
+  ✅ app/auth/resend-verification/page.tsx — resend verification email
+
+All pages:
+  - Use getPlatformDomain() for domain parameter
+  - Use PM's auth API routes (/api/auth/*)
+  - Use AuthLayoutWrapper, AuthInput, AuthButton, AuthAlert from @/components/auth
+  - Use react-hot-toast (PM's toast system)
+  - Wrapped in Suspense boundaries for useSearchParams()
+  - proxy.ts updated to exclude /auth from [domain] rewrite
+
+================================================================================
+ STAGE 4B: API ROUTES + LIB
  Status: ⏳ PENDING
 ================================================================================
 
@@ -147,15 +168,19 @@ API ROUTES (FA-specific, not already in PM):
 
 Already done:
   ✅ app/api/contact-form/route.ts
+  ✅ lib/paygate-utils.ts (Paygate integration)
+  ✅ lib/payment-utils.ts (payment utilities)
+  ✅ lib/payfast-config.ts (PayFast config)
+  ✅ convex/sites.ts (site config functions)
+  ✅ sites table in schema
+  ✅ react-day-picker installed
+  ✅ PM's lib/email.ts has full Resend-based email system
 
-LIB FILES to copy:
-  - lib/paygate-utils.ts (Paygate integration — NEW)
-  - lib/payfast-config.ts (compare with PM's — extend)
-  - lib/payment-utils.ts (payment utilities)
+LIB FILES still to copy:
   - lib/payment-confirmation-templates.ts (email templates)
   - lib/pdf-utils.ts (PDF generation)
   - lib/email-components.ts (email component helpers)
-  - lib/email-templates.ts (email templates)
+  - lib/email-templates.ts (email templates — check if PM's covers it)
 
 SKIP (PM already has):
   - lib/auth.ts, lib/utils.ts, lib/convex.ts
@@ -216,8 +241,10 @@ SKIP (PM already has):
 5. ROUTING:
    - Platform pages (contact, about, advertise, terms, privacy, listings):
      → Root app/ level (not under [domain])
+   - Auth pages (login, register, forgot-password, reset-password, verify-email, resend-verification):
+     → Root app/auth/ level (not under [domain])
    - Company-specific pages (dashboard, bookings, inquiries):
      → Under app/[domain]/ routes
-   - Auth pages: PM's auth system at app/[domain]/auth/
+   - proxy.ts excludes /auth from [domain] rewrite (like /api/, /_next/, etc.)
 
 ================================================================================

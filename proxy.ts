@@ -74,7 +74,15 @@ export async function proxy(request: NextRequest) {
   }
 
   if (isPlatformDomain(domain)) {
-    return securityHeaders(NextResponse.next());
+    // For platform domain, root-level pages are served directly
+    const ROOT_PATHS = ['/', '/auth/', '/contact', '/advertise', '/about', '/terms', '/privacy', '/listings', '/saved-items', '/bookings', '/payment', '/preview-template'];
+    const isRootPath = ROOT_PATHS.some(p => url.pathname === p || url.pathname.startsWith(p + '/'));
+    if (isRootPath) {
+      return securityHeaders(NextResponse.next());
+    }
+    // Everything else (dashboard, admin, companies, etc.) → rewrite to [domain] routes
+    url.pathname = `/${domain}${url.pathname}`;
+    return securityHeaders(NextResponse.rewrite(url));
   }
 
   const primaryDomain = await getPrimaryDomain(domain);
