@@ -254,3 +254,23 @@ export const deleteListing = mutation({
     return args.id;
   },
 });
+
+// Update listing status (active/inactive) - used by API routes
+export const updateListingStatus = mutation({
+  args: {
+    id: v.id("listings"),
+    status: v.union(v.literal("active"), v.literal("inactive")),
+  },
+  handler: async (ctx, args) => {
+    const listing = await ctx.db.get(args.id);
+    if (!listing) {
+      throw new Error("Listing not found");
+    }
+
+    await ctx.db.patch(args.id, {
+      isActive: args.status === "active",
+    });
+
+    return args.id;
+  },
+});

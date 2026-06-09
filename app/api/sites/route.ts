@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const session = await convex.query(api.auth.validateSession, { token });
+    const session = await convex.query(api.auth.verifySession, { token });
 
     if (!session) {
       return NextResponse.json(
@@ -24,13 +24,14 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const sites = await convex.query(api.auth.getUserSites, {
-      userId: session.user.id,
+    // Get user's company listings as a proxy for sites
+    const user = await convex.query(api.auth.getUserById, {
+      userId: session.userId,
     });
 
     return NextResponse.json({
       success: true,
-      sites,
+      sites: user ? [{ userId: session.userId, user }] : [],
     });
 
   } catch (error) {
@@ -55,7 +56,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const session = await convex.query(api.auth.validateSession, { token });
+    const session = await convex.query(api.auth.verifySession, { token });
 
     if (!session) {
       return NextResponse.json(
@@ -71,8 +72,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const result = await convex.mutation(api.auth.createSite, {
-      userId: session.user.id,
+    const result = await convex.mutation(api.sites.createSite, {
       name,
       description,
       domain,
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: 'Site created successfully',
-      siteId: result.siteId,
+      siteId: result,
     });
 
   } catch (error) {

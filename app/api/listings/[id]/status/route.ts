@@ -23,7 +23,7 @@ export async function PATCH(
 
     await convexHttpClient.mutation(api.faListings.updateListingStatus, {
       id: listingId as Id<'listings'>,
-      status,
+      status: status as 'active' | 'inactive',
     });
 
     return NextResponse.json({
