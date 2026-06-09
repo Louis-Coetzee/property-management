@@ -11,6 +11,8 @@ import { useState } from 'react';
 import { useAuth } from '@/app/[domain]/AuthProvider';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
+import { isPlatformDomain } from '@/lib/domain';
+import { AccommodationLandingPage } from '@/components/AccommodationLandingPage';
 
 const features = [
   {
@@ -345,9 +347,11 @@ export default function DomainPage() {
     );
   }
 
-  // No app or website found - show professional landing page
+  // No app or website found - show landing page
   if (!app && !directWebsite) {
-    return <ProfessionalLandingPage domain={domain} />;
+    return isPlatformDomain(domain)
+      ? <AccommodationLandingPage domain={domain} />
+      : <ProfessionalLandingPage domain={domain} />;
   }
 
   // If we have a direct website, render it regardless of app
@@ -456,7 +460,9 @@ export default function DomainPage() {
 
   // Render based on app type (for when there's app but no direct website)
   if (!app) {
-    return <ProfessionalLandingPage domain={domain} />;
+    return isPlatformDomain(domain)
+      ? <AccommodationLandingPage domain={domain} />
+      : <ProfessionalLandingPage domain={domain} />;
   }
 
   switch (app.type) {
