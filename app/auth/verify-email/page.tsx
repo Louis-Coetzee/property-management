@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
@@ -13,6 +13,14 @@ import { AuthLayoutWrapper } from '@/components/auth';
 const REFRESH_TECH_PRIMARY = '#10304f';
 
 export default function VerifyEmailPage() {
+  return (
+    <Suspense>
+      <VerifyEmailPageInner />
+    </Suspense>
+  );
+}
+
+function VerifyEmailPageInner() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
 

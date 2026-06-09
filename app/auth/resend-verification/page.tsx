@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -25,6 +25,14 @@ interface ResendVerificationResponse {
 }
 
 export default function ResendVerificationPage() {
+  return (
+    <Suspense>
+      <ResendVerificationPageInner />
+    </Suspense>
+  );
+}
+
+function ResendVerificationPageInner() {
   const searchParams = useSearchParams();
   const domain = getPlatformDomain();
   const emailFromUrl = searchParams.get('email');
