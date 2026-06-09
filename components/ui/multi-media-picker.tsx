@@ -160,6 +160,9 @@ export function MultiMediaPicker({
             onSelectMultipleImages={(_mediaIds, urls) => handleSelectFromLibrary(urls.filter(u => u && u.startsWith('http')))}
             selectedImages={value}
             allowMultiSelect={true}
+            maxImages={maxImages}
+            currentImageCount={value.length}
+            contextName={label || "Listing"}
           >
             <Button
               type="button"

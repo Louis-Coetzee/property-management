@@ -276,8 +276,13 @@ export default function MediaLibrary({
 
   // Handle image/document selection
   const handleMediaItemSelect = (url: string, mediaId: Id<"mediaLibrary">) => {
-    // Toggle selection
-    toggleMultiSelect(mediaId);
+    if (allowMultiSelect) {
+      // Toggle selection in multi-select mode
+      toggleMultiSelect(mediaId);
+    } else {
+      // Single select mode - select and close
+      onSelectImage(url);
+    }
   };
 
   // Handle delete button click - open confirmation modal

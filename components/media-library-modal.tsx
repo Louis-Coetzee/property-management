@@ -39,6 +39,15 @@ export default function MediaLibraryModal({
   const isOpen = isControlled ? controlledOpen : internalOpen;
   const setOpen = onOpenChange || setInternalOpen;
 
+  // Wrapper for multi-select that closes modal after selection
+  const handleMultiSelect = (mediaIds: Id<"mediaLibrary">[], urls: string[]) => {
+    if (onSelectMultipleImages) {
+      onSelectMultipleImages(mediaIds, urls);
+    }
+    // Close modal after multi-selection is applied
+    setOpen(false);
+  };
+
   return (
     <>
       {/* Trigger - clicking children opens the modal */}
@@ -73,7 +82,7 @@ export default function MediaLibraryModal({
                     setOpen(false);
                   }
                 }}
-                onMultiSelect={onSelectMultipleImages}
+                onMultiSelect={handleMultiSelect}
                 selectedImages={selectedImages}
                 allowMultiSelect={allowMultiSelect}
                 maxImages={maxImages}
