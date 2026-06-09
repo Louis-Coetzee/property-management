@@ -252,8 +252,23 @@ export class CloudflareImagesClient {
   }
 }
 
-// Export singleton instance
-export const cloudflareImagesClient = new CloudflareImagesClient();
+// Export singleton instance (lazy — only throws when actually used without config)
+let _client: CloudflareImagesClient | null = null;
+export function getCloudflareImagesClient(): CloudflareImagesClient {
+  if (!_client) _client = new CloudflareImagesClient();
+  return _client;
+}
+
+const _noop: any = {};
+export const cloudflareImagesClient: CloudflareImagesClient = validateCloudflareConfig()
+  ? new CloudflareImagesClient()
+  : new Proxy(_noop, {
+      get(_, prop) {
+        if (prop === 'getOptimizedImageProps') return (_src: string, alt = 'Image') => ({ src: '/placeholder-image.svg', alt, unoptimized: true });
+        if (prop === 'getCloudflareImageUrl') return (_id: string, _variant = 'public') => null;
+        return () => { throw new Error('Cloudflare Images not configured. Set CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN.'); };
+      },
+    });
 
 // Convenient wrapper functions
 export async function uploadImageToCloudflare(file: File | Buffer, filename?: string): Promise<string> {
