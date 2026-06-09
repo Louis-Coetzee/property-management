@@ -64,7 +64,7 @@ function NewBookingPageContent() {
     setIsSubmitting(true);
     try {
       toast.success('Booking request submitted! You will receive confirmation shortly.');
-      router.push('/dashboard');
+      router.push(`/listings/${listingId}`);
     } catch (error) {
       toast.error('Failed to submit booking. Please try again.');
     } finally {

@@ -15,3 +15,8 @@ export function getConvexClient(): ConvexHttpClient {
   }
   return client;
 }
+
+// Shared Convex HTTP client for API routes (matches FA's lib/convex.ts export)
+export const convexHttpClient = new ConvexHttpClient(
+  process.env.NEXT_PUBLIC_CONVEX_URL as string
+);

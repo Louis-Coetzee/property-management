@@ -1343,3 +1343,41 @@ export async function sendInvoiceEmail(data: InvoiceEmailData) {
     throw new Error('Failed to send invoice email');
   }
 }
+
+// Generic sendEmail function used by FA API routes (booking, inquiry, alert, contact emails)
+export async function sendEmail(data: {
+  to: string;
+  subject: string;
+  html: string;
+  from?: string;
+}): Promise<{ success: boolean; id?: string; error?: string; actualRecipient?: string }> {
+  const fromEmail = data.from || process.env.FROM_EMAIL || process.env.RESEND_FROM_EMAIL || 'RefreshTech <no-reply@online-site.co.za>';
+
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: fromEmail,
+        to: [data.to],
+        subject: data.subject,
+        html: data.html,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error('[sendEmail] Failed:', response.status, errorData);
+      return { success: false, error: `Failed to send email: ${response.status} ${errorData}` };
+    }
+
+    const result = await response.json();
+    return { success: true, id: result.id, actualRecipient: data.to };
+  } catch (error) {
+    console.error('[sendEmail] Error:', error);
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+  }
+}
