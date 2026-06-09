@@ -25,13 +25,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!listing.paymentDetails) {
-      return NextResponse.json(
-        { error: 'No payment details configured for this listing', listingTitle: listing.title },
-        { status: 400 }
-      );
-    }
-
     let siteSettings: any = null;
     try {
       const siteResult = await fetchQuery(api.sites.getSiteByDomain, {
@@ -42,6 +35,19 @@ export async function POST(request: NextRequest) {
       }
     } catch (error) {
       console.warn('Could not fetch site settings:', error);
+    }
+
+    // Check if banking details are available from listing or site settings
+    const listingBanking = listing.paymentDetails?.bankingDetails;
+    const sitePayment = siteSettings?.settings?.payment;
+    const hasListingBanking = listingBanking && (listingBanking.bankName || listingBanking.accountNumber);
+    const hasSiteBanking = sitePayment && (sitePayment.bookingPaymentBankName || sitePayment.bookingPaymentAccountNumber);
+
+    if (!hasListingBanking && !hasSiteBanking) {
+      return NextResponse.json(
+        { error: 'No banking details configured. Please set banking details in Site Settings or on the listing.' },
+        { status: 400 }
+      );
     }
 
     const emailTemplate = generatePaymentDetailsEmail(inquiry, listing, siteSettings);

@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     const responseParams: Record<string, string> = {};
     params.forEach((value, key) => { responseParams[key] = value; });
 
-    const parsedResponse = parsePaygateResponse(responseParams);
+    const parsedResponse = parsePaygateResponse(body);
 
     const sites = await convex.query(api.sites.getAllSites);
     const site = sites && sites.length > 0 ? sites[0] : null;
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
 
     const paygateSettings = site.settings.payment.paygate;
     const encryptionKey = paygateSettings.liveMode
-      ? paygateSettings.encryptionKey
+      ? (paygateSettings.encryptionKey || PAYGATE_TEST_CREDENTIALS.encryptionKey)
       : PAYGATE_TEST_CREDENTIALS.encryptionKey;
 
     if (!verifyPaygateResponse(responseParams, encryptionKey)) {
@@ -79,9 +79,23 @@ export async function POST(request: NextRequest) {
           await convex.mutation(api.accommodationBookings.updateBookingStatus, {
             bookingId,
             status: 'confirmed',
+            paymentStatus: 'paid',
           } as any);
         } catch (e) {
           console.error('Failed to update booking status:', e);
+        }
+      }
+
+      // Also update the accommodation inquiry status to payment-received
+      const inquiryId = customData.inquiryId;
+      if (inquiryId) {
+        try {
+          await convex.mutation(api.accommodationInquiries.updateInquiryStatusDirect, {
+            inquiryId,
+            status: 'payment-received',
+          });
+        } catch (e) {
+          console.error('Failed to update inquiry status:', e);
         }
       }
     } else {

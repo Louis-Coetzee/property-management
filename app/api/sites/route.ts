@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const session = await convex.query(api.auth.verifySession, { token });
+    const session = await convex.query(api.auth.verifySession, { sessionToken: token });
 
     if (!session) {
       return NextResponse.json(
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const session = await convex.query(api.auth.verifySession, { token });
+    const session = await convex.query(api.auth.verifySession, { sessionToken: token });
 
     if (!session) {
       return NextResponse.json(
@@ -73,6 +73,7 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await convex.mutation(api.sites.createSite, {
+      userId: session.userId,
       name,
       description,
       domain,

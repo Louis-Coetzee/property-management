@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { ImagePlus, X, Trash2, GripVertical, Star, Crown, Image as ImageIcon } from 'lucide-react';
 import MediaLibraryModal from '@/components/media-library-modal';
 import { Id } from '@/convex/_generated/dataModel';
-import { useAuth } from '@/app/[domain]/AuthProvider';
+import { useRootAuth } from '@/components/platform/RootAuthProvider';
 import { cn } from '@/lib/utils';
 import { getOptimizedImageProps } from '@/lib/cloudflare-images';
 
@@ -40,7 +40,7 @@ export function MultiMediaPicker({
   disabled = false,
   maxImages = 10
 }: MultiMediaPickerProps) {
-  const { user } = useAuth();
+  const { user } = useRootAuth();
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [draggedOverIndex, setDraggedOverIndex] = useState<number | null>(null);
 

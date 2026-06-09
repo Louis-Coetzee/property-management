@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Id } from '@/convex/_generated/dataModel';
-import { ImagePlus, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import MediaLibrary from '@/components/media-library';
 
 interface MediaLibraryModalProps {
@@ -30,17 +30,24 @@ export default function MediaLibraryModal({
   currentImageCount = 0,
   contextName = "Profile",
   defaultTab = 'images',
-  open: controlledOpen = false,
+  open: controlledOpen,
   onOpenChange,
   children
 }: MediaLibraryModalProps) {
-  // Use controlled state if provided, otherwise use internal state
   const [internalOpen, setInternalOpen] = useState(false);
-  const isOpen = controlledOpen !== undefined ? controlledOpen : internalOpen;
+  const isControlled = controlledOpen !== undefined;
+  const isOpen = isControlled ? controlledOpen : internalOpen;
   const setOpen = onOpenChange || setInternalOpen;
 
   return (
     <>
+      {/* Trigger - clicking children opens the modal */}
+      {children && (
+        <div onClick={() => setOpen(true)} className="inline-flex cursor-pointer">
+          {children}
+        </div>
+      )}
+
       {/* Modal */}
       {isOpen && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
@@ -62,7 +69,9 @@ export default function MediaLibraryModal({
                 userId={userId}
                 onSelectImage={(url) => {
                   onSelectImage(url);
-                  setOpen(false);
+                  if (!allowMultiSelect) {
+                    setOpen(false);
+                  }
                 }}
                 onMultiSelect={onSelectMultipleImages}
                 selectedImages={selectedImages}

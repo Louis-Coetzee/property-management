@@ -590,6 +590,36 @@ export const getHostInquiries = query({
   },
 });
 
+// Direct status update for webhooks (no auth required)
+export const updateInquiryStatusDirect = mutation({
+  args: {
+    inquiryId: v.id("accommodationInquiries"),
+    status: v.union(
+      v.literal("pending"),
+      v.literal("confirmed"),
+      v.literal("approved"),
+      v.literal("declined"),
+      v.literal("cancelled"),
+      v.literal("completed"),
+      v.literal("payment-received")
+    ),
+  },
+  handler: async (ctx, args) => {
+    const inquiry = await ctx.db.get(args.inquiryId);
+    if (!inquiry) {
+      throw new ConvexError("Inquiry not found");
+    }
+
+    await ctx.db.patch(args.inquiryId, {
+      status: args.status,
+      respondedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+
+    return args.inquiryId;
+  },
+});
+
 // Update inquiry status
 export const updateInquiryStatus = mutation({
   args: {
@@ -843,6 +873,8 @@ export const sendStatusChangeEmails = action({
     }
 
     const baseUrl = getBaseUrl();
+
+    // Send status change email to guest
     const emailData = {
       to: inquiry.guestEmail,
       inquiry,
@@ -866,16 +898,53 @@ export const sendStatusChangeEmails = action({
       if (!response.ok) {
         const errorText = await response.text();
         console.error('❌ [STATUS-CHANGE-EMAIL] Failed to send status change email:', errorText);
-        return { success: false, error: errorText };
+      } else {
+        const result = await response.json();
+        console.log(`✅ [STATUS-CHANGE-EMAIL] Status change email sent successfully:`, result);
       }
-
-      const result = await response.json();
-      console.log(`✅ [STATUS-CHANGE-EMAIL] Status change email sent successfully:`, result);
-
-      return { success: true };
     } catch (error) {
       console.error('❌ [STATUS-CHANGE-EMAIL] Error sending status change email:', error);
-      return { success: false, error: String(error) };
     }
+
+    // When approved, also send payment details email with banking info
+    if (args.newStatus === "approved") {
+      console.log(`📧 [PAYMENT-DETAILS] Booking approved — sending payment details email to guest: ${inquiry.guestEmail}`);
+
+      try {
+        // Get the listing for image and payment details
+        const listingData = await ctx.runQuery(api.listings.getListingById, {
+          id: inquiry.listingId,
+        });
+
+        const paymentResponse = await fetch(`${baseUrl}/api/send-payment-details-email`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'User-Agent': 'Convex-Inquiry-System'
+          },
+          body: JSON.stringify({
+            inquiry,
+            listing: {
+              title: inquiry.listingTitle,
+              featuredImage: listingData?.featuredImage || (listingData?.images?.[0] ?? null),
+              paymentDetails: listingData?.paymentDetails || null,
+            },
+            recipientEmail: inquiry.guestEmail,
+          }),
+        });
+
+        if (!paymentResponse.ok) {
+          const errorText = await paymentResponse.text();
+          console.error('❌ [PAYMENT-DETAILS] Failed to send payment details email:', errorText);
+        } else {
+          const result = await paymentResponse.json();
+          console.log(`✅ [PAYMENT-DETAILS] Payment details email sent successfully:`, result);
+        }
+      } catch (error) {
+        console.error('❌ [PAYMENT-DETAILS] Error sending payment details email:', error);
+      }
+    }
+
+    return { success: true };
   },
 });

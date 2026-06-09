@@ -268,7 +268,7 @@ export const updateListingStatus = mutation({
     }
 
     await ctx.db.patch(args.id, {
-      isActive: args.status === "active",
+      status: args.status === "active" ? "active" : "inactive",
     });
 
     return args.id;

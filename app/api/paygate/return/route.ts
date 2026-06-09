@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {
-  parsePaygateResponse,
   isTransactionSuccessful,
   PAYGATE_TEST_CREDENTIALS
 } from '@/lib/paygate-utils';
@@ -40,8 +39,6 @@ export async function POST(request: NextRequest) {
     const responseParams: Record<string, string> = {};
     params.forEach((value, key) => { responseParams[key] = value; });
 
-    const parsedResponse = parsePaygateResponse(responseParams);
-
     const sites = await convex.query(api.sites.getAllSites);
     const site = sites && sites.length > 0 ? sites[0] : null;
 
@@ -51,7 +48,7 @@ export async function POST(request: NextRequest) {
 
     const paygateSettings = site.settings.payment.paygate;
     const encryptionKey = paygateSettings.liveMode
-      ? paygateSettings.encryptionKey
+      ? (paygateSettings.encryptionKey || PAYGATE_TEST_CREDENTIALS.encryptionKey)
       : PAYGATE_TEST_CREDENTIALS.encryptionKey;
 
     if (!verifyPaygateResponse(responseParams, encryptionKey)) {
@@ -59,8 +56,8 @@ export async function POST(request: NextRequest) {
     }
 
     const transactionSuccess = isTransactionSuccessful(
-      parsedResponse.TRANSACTION_STATUS,
-      parsedResponse.RESULT_CODE
+      responseParams.TRANSACTION_STATUS,
+      responseParams.RESULT_CODE
     );
 
     const customData = JSON.parse(responseParams.USER1 || '{}');
@@ -75,8 +72,8 @@ export async function POST(request: NextRequest) {
     } else {
       const errorUrl = new URL('/payment-error', request.url);
       errorUrl.searchParams.set('gateway', 'paygate');
-      errorUrl.searchParams.set('code', parsedResponse.RESULT_CODE);
-      errorUrl.searchParams.set('message', parsedResponse.RESULT_DESC);
+      errorUrl.searchParams.set('code', responseParams.RESULT_CODE);
+      errorUrl.searchParams.set('message', responseParams.RESULT_DESC);
       return NextResponse.redirect(errorUrl);
     }
 
@@ -94,7 +91,6 @@ export async function GET(request: NextRequest) {
   params.forEach((value, key) => { responseParams[key] = value; });
 
   try {
-    const parsedResponse = parsePaygateResponse(responseParams);
     const sites = await convex.query(api.sites.getAllSites);
     const site = sites && sites.length > 0 ? sites[0] : null;
 
@@ -104,7 +100,7 @@ export async function GET(request: NextRequest) {
 
     const paygateSettings = site.settings.payment.paygate;
     const encryptionKey = paygateSettings.liveMode
-      ? paygateSettings.encryptionKey
+      ? (paygateSettings.encryptionKey || PAYGATE_TEST_CREDENTIALS.encryptionKey)
       : PAYGATE_TEST_CREDENTIALS.encryptionKey;
 
     if (!verifyPaygateResponse(responseParams, encryptionKey)) {
@@ -112,8 +108,8 @@ export async function GET(request: NextRequest) {
     }
 
     const transactionSuccess = isTransactionSuccessful(
-      parsedResponse.TRANSACTION_STATUS,
-      parsedResponse.RESULT_CODE
+      responseParams.TRANSACTION_STATUS,
+      responseParams.RESULT_CODE
     );
 
     const customData = JSON.parse(responseParams.USER1 || '{}');
@@ -128,8 +124,8 @@ export async function GET(request: NextRequest) {
     } else {
       const errorUrl = new URL('/payment-error', request.url);
       errorUrl.searchParams.set('gateway', 'paygate');
-      errorUrl.searchParams.set('code', parsedResponse.RESULT_CODE);
-      errorUrl.searchParams.set('message', parsedResponse.RESULT_DESC);
+      errorUrl.searchParams.set('code', responseParams.RESULT_CODE);
+      errorUrl.searchParams.set('message', responseParams.RESULT_DESC);
       return NextResponse.redirect(errorUrl);
     }
 

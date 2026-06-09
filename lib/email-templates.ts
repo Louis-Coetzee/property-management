@@ -792,7 +792,22 @@ export function generatePaymentDetailsEmail(inquiry: any, listing: any, siteSett
   };
 
   const paymentDetails = listing.paymentDetails;
-  const banking = paymentDetails?.bankingDetails;
+  const listingBanking = paymentDetails?.bankingDetails;
+
+  // Fall back to site settings banking details if listing doesn't have them
+  const sitePayment = siteSettings?.settings?.payment;
+  const banking = (listingBanking && (listingBanking.bankName || listingBanking.accountNumber))
+    ? listingBanking
+    : (sitePayment && (sitePayment.bookingPaymentBankName || sitePayment.bookingPaymentAccountNumber))
+      ? {
+          bankName: sitePayment.bookingPaymentBankName || '',
+          accountHolder: sitePayment.bookingPaymentAccountHolder || '',
+          accountNumber: sitePayment.bookingPaymentAccountNumber || '',
+          branchCode: sitePayment.bookingPaymentBranchCode || '',
+          accountType: sitePayment.bookingPaymentAccountType || 'current',
+          swiftCode: sitePayment.bookingPaymentSwiftCode || '',
+        }
+      : null;
 
   const content = `
     <div style="text-align: center; margin-bottom: 24px;">
@@ -989,3 +1004,94 @@ function generateInquiryEmailTemplate(
 export {
   generateInquiryEmailTemplate as generateInquiryForwardEmail,
 };
+
+// Booking status change email
+export function generateBookingStatusChangeEmail(inquiry: any, newStatus: string, listingTitle: string): { subject: string; html: string } {
+  const statusMessages: Record<string, { color: string; bgColor: string; borderColor: string; title: string; message: string }> = {
+    approved: {
+      color: '#047857',
+      bgColor: '#ecfdf5',
+      borderColor: '#059669',
+      title: 'Booking Approved!',
+      message: `Great news! Your booking request for <strong>${listingTitle}</strong> has been approved. You will receive payment instructions and banking details shortly.`,
+    },
+    confirmed: {
+      color: '#1e40af',
+      bgColor: '#eff6ff',
+      borderColor: '#3b82f6',
+      title: 'Booking Confirmed!',
+      message: `Your booking for <strong>${listingTitle}</strong> has been confirmed. Thank you for your payment!`,
+    },
+    declined: {
+      color: '#b91c1c',
+      bgColor: '#fef2f2',
+      borderColor: '#ef4444',
+      title: 'Booking Declined',
+      message: `We regret to inform you that your booking request for <strong>${listingTitle}</strong> has been declined.`,
+    },
+    cancelled: {
+      color: '#b45309',
+      bgColor: '#fffbeb',
+      borderColor: '#f59e0b',
+      title: 'Booking Cancelled',
+      message: `Your booking for <strong>${listingTitle}</strong> has been cancelled.`,
+    },
+    completed: {
+      color: '#047857',
+      bgColor: '#ecfdf5',
+      borderColor: '#059669',
+      title: 'Booking Completed',
+      message: `Your booking for <strong>${listingTitle}</strong> has been marked as completed. Thank you for staying with us!`,
+    },
+    'payment-received': {
+      color: '#1e40af',
+      bgColor: '#eff6ff',
+      borderColor: '#3b82f6',
+      title: 'Payment Received',
+      message: `We have received your payment for <strong>${listingTitle}</strong>. Your booking is now confirmed!`,
+    },
+    pending: {
+      color: '#b45309',
+      bgColor: '#fffbeb',
+      borderColor: '#f59e0b',
+      title: 'Booking Update',
+      message: `Your booking for <strong>${listingTitle}</strong> is currently pending.`,
+    },
+  };
+
+  const statusInfo = statusMessages[newStatus] || statusMessages.pending;
+
+  const content = `
+    <div style="text-align: center; margin-bottom: 32px;">
+      <div style="display: inline-block; background: ${statusInfo.bgColor}; border: 2px solid ${statusInfo.borderColor}; border-radius: 8px; padding: 12px 24px; margin-bottom: 16px;">
+        <p style="color: ${statusInfo.color}; font-size: 24px; margin: 0; font-weight: 700;">${statusInfo.title}</p>
+      </div>
+      <p style="color: #6B7280; font-size: 16px; margin: 8px 0 0 0;">
+        Booking Reference: <strong>${inquiry.bookingNumber || 'N/A'}</strong>
+      </p>
+    </div>
+    <div style="background: ${statusInfo.bgColor}; border: 2px solid ${statusInfo.borderColor}; border-radius: 12px; padding: 24px; margin: 24px 0;">
+      <p style="color: ${statusInfo.color}; line-height: 1.6; margin: 0; font-size: 16px;">
+        ${statusInfo.message}
+      </p>
+    </div>
+    <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; margin: 24px 0;">
+      <h3 style="color: #374151; font-size: 16px; margin: 0 0 12px 0; font-weight: 600;">Booking Details</h3>
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tr><td style="padding: 6px 0; color: #6B7280;">Property:</td><td style="padding: 6px 0; color: #111827; font-weight: 500; text-align: right;">${listingTitle}</td></tr>
+        <tr><td style="padding: 6px 0; color: #6B7280;">Guest:</td><td style="padding: 6px 0; color: #111827; font-weight: 500; text-align: right;">${inquiry.guestName}</td></tr>
+        ${inquiry.checkInDate ? `<tr><td style="padding: 6px 0; color: #6B7280;">Check-in:</td><td style="padding: 6px 0; color: #111827; font-weight: 500; text-align: right;">${new Date(inquiry.checkInDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</td></tr>` : ''}
+        ${inquiry.checkOutDate ? `<tr><td style="padding: 6px 0; color: #6B7280;">Check-out:</td><td style="padding: 6px 0; color: #111827; font-weight: 500; text-align: right;">${new Date(inquiry.checkOutDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</td></tr>` : ''}
+        ${inquiry.totalAmount ? `<tr><td style="padding: 6px 0; color: #6B7280;">Total:</td><td style="padding: 6px 0; color: #111827; font-weight: 500; text-align: right;">R${inquiry.totalAmount.toLocaleString()}</td></tr>` : ''}
+      </table>
+    </div>
+    <p style="color: #6B7280; font-size: 14px; margin: 24px 0 0 0;">
+      If you have any questions, please don't hesitate to contact us.
+    </p>
+  `;
+
+  return {
+    subject: `${statusInfo.title} - ${listingTitle}`,
+    html: getBaseTemplate(content),
+  };
+}

@@ -102,9 +102,7 @@ export async function POST(request: NextRequest) {
       email,
       firstName,
       lastName,
-      countryCode: 'ZAF',
-      locale: 'en-za',
-      method: 'cc'
+      countryCode: 'ZAF'
     });
 
     const paygateUrls = getPaygateUrls(paygateConfig.liveMode);
