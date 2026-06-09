@@ -7,7 +7,7 @@ export interface PageTemplate {
   id: string;
   name: string;
   description: string;
-  category: 'dealership' | 'business' | 'portfolio' | 'ecommerce' | 'landing';
+  category: 'dealership' | 'business' | 'portfolio' | 'ecommerce' | 'landing' | 'accommodation';
   previewImage?: string;
   sections: PageSection[];
   isAvailable: boolean;
@@ -1517,12 +1517,623 @@ export const gardenServiceTemplate: PageTemplate = {
 };
 
 /**
+ * Luxury Holiday Accommodation Landing Page Template
+ * An upmarket, professional landing page for holiday accommodation, luxury lodges, boutique hotels, and premium stays
+ */
+export const luxuryAccommodationTemplate: PageTemplate = {
+  id: 'luxury-accommodation-premium',
+  name: 'Luxury Holiday Accommodation',
+  description: 'An upmarket, professional landing page for holiday accommodation, luxury lodges, boutique hotels, and premium stays. Features stunning hero, property showcase, amenities, guest testimonials, and seamless booking.',
+  category: 'accommodation',
+  isAvailable: true,
+  tags: ['accommodation', 'holiday', 'lodge', 'hotel', 'luxury', 'boutique', 'travel', 'booking'],
+  previewImage: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80',
+  sections: [
+    // ========================================
+    // NAVIGATION
+    // ========================================
+    {
+      id: generateSectionId('navbar'),
+      type: 'navbar',
+      templateId: 'navbar-modern',
+      order: 1,
+      content: {
+        logoType: 'text',
+        brandName: 'The Grand Retreat',
+        links: [
+          { label: 'Home', type: 'url', url: '#section-hero' },
+          { label: 'Accommodation', type: 'url', url: '#section-inventory' },
+          { label: 'Amenities', type: 'url', url: '#section-features' },
+          { label: 'Gallery', type: 'url', url: '#section-about' },
+          { label: 'Reviews', type: 'url', url: '#testimonials' },
+          { label: 'Contact', type: 'url', url: '#section-contact' },
+        ],
+        ctaText: 'Book Now',
+        ctaLink: '#section-contact',
+        backgroundColor: '#1a1a2e',
+        textColor: '#f5f0e8',
+        linkHoverColor: '#c9a96e',
+        accentColor: '#c9a96e',
+        linksAlignment: 'center',
+        linkFontSize: 14,
+        logoTextSize: 20,
+      },
+      settings: {
+        backgroundColor: '#1a1a2e',
+      },
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    },
+
+    // ========================================
+    // HERO - LUXURY ACCOMMODATION FOCUSED
+    // ========================================
+    {
+      id: 'hero',
+      type: 'hero',
+      templateId: 'hero-modern',
+      order: 2,
+      content: {
+        headline: 'Experience\nUnforgettable Luxury',
+        subheadline: 'Indulge in world-class accommodation where every detail is crafted for your comfort. From stunning suites to breathtaking views, your perfect escape awaits.',
+        ctaText: 'Check Availability',
+        ctaLink: '#section-contact',
+        ctaType: 'url',
+        secondaryCtaText: 'Virtual Tour',
+        secondaryCtaLink: '#section-about',
+        secondaryCtaType: 'url',
+        colorMode: 'dark',
+        backgroundColor: '#1a1a2e',
+        textColor: '#f5f0e8',
+        showWelcomeTag: true,
+        showScrollIndicator: true,
+        showStatsCard: false,
+        showTrustIndicators: true,
+        stats: [
+          { id: 'stat1', value: '5-Star', label: 'Rating', iconType: 'solid', solidIcon: 'star', solidIconColor: '#c9a96e' },
+          { id: 'stat2', value: '12+', label: 'Years', iconType: 'solid', solidIcon: 'calendar', solidIconColor: '#c9a96e' },
+          { id: 'stat3', value: '5000+', label: 'Guests', iconType: 'solid', solidIcon: 'users', solidIconColor: '#c9a96e' },
+          { id: 'stat4', value: '98%', label: 'Return Rate', iconType: 'solid', solidIcon: 'heart', solidIconColor: '#c9a96e' },
+        ],
+        trustIndicators: [
+          { id: 'trust1', icon: 'award', label: 'Award-Winning' },
+          { id: 'trust2', icon: 'shield', label: 'Safe & Secure' },
+          { id: 'trust3', icon: 'check', label: 'Best Rate Guarantee' },
+        ],
+        customerTrustText: 'Trusted by 5000+ discerning travellers',
+      },
+      settings: {
+        backgroundColor: '#1a1a2e',
+        animation: {
+          enabled: true,
+          type: 'fade',
+          direction: 'up',
+          speed: 'normal',
+          duration: 600,
+          delay: 100,
+        },
+      },
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    },
+
+    // ========================================
+    // LISTINGS SHOWCASE - ROOMS & SUITES
+    // ========================================
+    {
+      id: 'inventory',
+      type: 'listings-showcase',
+      templateId: 'listings-showcase-modern',
+      order: 3,
+      content: {
+        headline: 'Rooms & Suites',
+        subheadline: 'Explore our collection of exquisitely appointed accommodations',
+        description: 'Every room is a sanctuary of comfort and elegance.',
+        itemsPerPage: 6,
+        showLoadMore: true,
+        loadMoreText: 'View All Rooms',
+        showSort: true,
+        showFilter: true,
+        defaultSort: 'newest',
+        showStatus: true,
+        showPrice: true,
+        showMileage: false,
+        showYear: false,
+        backgroundColor: '#f5f0e8',
+        textColor: '#1a1a2e',
+        accentColor: '#c9a96e',
+        cardStyle: 'modern',
+        layout: 'grid-3',
+        viewDetailsText: 'View Details',
+        viewDetailsTarget: 'url',
+        showNavbarOnDetails: true,
+        showFooterOnDetails: true,
+        inquiryButtonText: 'Reserve Now',
+        inquiryTarget: 'form',
+        showOnlySelected: true,
+        selectedVehicleIds: [],
+      },
+      settings: {
+        backgroundColor: '#f5f0e8',
+        animation: {
+          enabled: true,
+          type: 'fade',
+          direction: 'up',
+          speed: 'normal',
+          duration: 600,
+          delay: 100,
+        },
+      },
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    },
+
+    // ========================================
+    // FEATURES - CURATED EXPERIENCES
+    // ========================================
+    {
+      id: 'features',
+      type: 'features',
+      templateId: 'features-modern',
+      order: 4,
+      content: {
+        title: 'Curated Experiences',
+        subtitle: 'Exceptional amenities and services designed to make your stay truly memorable',
+        badgeText: 'Premium Amenities',
+        showBadge: true,
+        backgroundColor: '#1a1a2e',
+        textColor: '#ffffff',
+        accentColor: '#c9a96e',
+        iconStyle: 'gradient',
+        iconSize: 40,
+        autoRotate: true,
+        rotationDelay: 5,
+        features: [
+          {
+            id: 'feat-1',
+            title: 'Infinity Pool & Spa',
+            description: 'Unwind in our breathtaking infinity pool overlooking the landscape, followed by rejuvenating treatments at our world-class spa.',
+            iconType: 'solid',
+            solidIcon: 'waves',
+            solidIconColor: '#c9a96e',
+            link: { type: 'url', url: '#section-contact' },
+          },
+          {
+            id: 'feat-2',
+            title: 'Fine Dining',
+            description: 'Savour exquisite cuisine crafted by our award-winning chefs, featuring locally sourced ingredients and an extensive wine collection.',
+            iconType: 'solid',
+            solidIcon: 'utensils',
+            solidIconColor: '#c9a96e',
+            link: { type: 'url', url: '#section-contact' },
+          },
+          {
+            id: 'feat-3',
+            title: 'Private Safari Excursions',
+            description: 'Embark on exclusive guided safari adventures through pristine wilderness areas with expert naturalists.',
+            iconType: 'solid',
+            solidIcon: 'binoculars',
+            solidIconColor: '#c9a96e',
+            link: { type: 'url', url: '#section-contact' },
+          },
+          {
+            id: 'feat-4',
+            title: 'Wellness & Fitness',
+            description: 'Maintain your wellness routine in our state-of-the-art fitness centre or find inner peace with sunrise yoga sessions.',
+            iconType: 'solid',
+            solidIcon: 'heart-pulse',
+            solidIconColor: '#c9a96e',
+            link: { type: 'url', url: '#section-contact' },
+          },
+          {
+            id: 'feat-5',
+            title: 'Concierge Service',
+            description: 'Our dedicated concierge team is available around the clock to arrange exclusive experiences, reservations, and personalised itineraries.',
+            iconType: 'solid',
+            solidIcon: 'bell-ring',
+            solidIconColor: '#c9a96e',
+            link: { type: 'url', url: '#section-contact' },
+          },
+          {
+            id: 'feat-6',
+            title: 'Airport Transfers',
+            description: 'Enjoy complimentary luxury airport transfers in our fleet of premium vehicles, ensuring a seamless arrival and departure.',
+            iconType: 'solid',
+            solidIcon: 'car',
+            solidIconColor: '#c9a96e',
+            link: { type: 'url', url: '#section-contact' },
+          },
+        ],
+      },
+      settings: {
+        backgroundColor: '#1a1a2e',
+        animation: {
+          enabled: true,
+          type: 'fade',
+          direction: 'up',
+          speed: 'normal',
+          duration: 600,
+          delay: 100,
+        },
+      },
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    },
+
+    // ========================================
+    // ABOUT SECTION
+    // ========================================
+    {
+      id: 'about',
+      type: 'about',
+      templateId: 'about-modern',
+      order: 5,
+      content: {
+        headline: 'A Legacy of\nExceptional Hospitality',
+        subheadline: 'Why Guests Choose The Grand Retreat',
+        description: 'For over a decade, The Grand Retreat has been the sanctuary of choice for discerning travellers seeking unparalleled luxury and authentic hospitality. Our commitment to excellence, attention to detail, and warm personalised service creates experiences that linger long after checkout.\n\nNestled in a breathtaking location, our property seamlessly blends timeless elegance with modern sophistication. Every suite, every meal, and every interaction is designed to exceed your expectations and create treasured memories.',
+        imageUrl: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800&q=80',
+        imageAlt: 'Luxury suite with panoramic views',
+        imagePosition: 'right',
+        imageSize: 'large',
+        ctaText: 'Discover Our Story',
+        ctaLink: '#section-contact',
+        ctaTarget: 'url',
+        backgroundColor: '#f5f0e8',
+        textColor: '#1a1a2e',
+        ctaButtonBg: '#c9a96e',
+        ctaButtonTextColor: '#1a1a2e',
+        accentColor: '#c9a96e',
+        showStats: true,
+        showFeaturePills: true,
+        featurePills: [
+          { id: 'pill-1', text: 'Award-Winning', iconType: 'solid', solidIcon: 'award', solidIconColor: '#c9a96e' },
+          { id: 'pill-2', text: 'Eco-Conscious', iconType: 'solid', solidIcon: 'leaf', solidIconColor: '#c9a96e' },
+          { id: 'pill-3', text: 'Personalised Service', iconType: 'solid', solidIcon: 'user', solidIconColor: '#c9a96e' },
+          { id: 'pill-4', text: 'Exclusive Location', iconType: 'solid', solidIcon: 'map-pin', solidIconColor: '#c9a96e' },
+        ],
+        stats: [
+          { id: 'stat1', value: '12+', label: 'Years Experience', iconType: 'solid', solidIcon: 'calendar', solidIconColor: '#c9a96e' },
+          { id: 'stat2', value: '5000+', label: 'Happy Guests', iconType: 'solid', solidIcon: 'users', solidIconColor: '#c9a96e' },
+          { id: 'stat3', value: '50+', label: 'Luxury Suites', iconType: 'solid', solidIcon: 'bed', solidIconColor: '#c9a96e' },
+          { id: 'stat4', value: '4.9', label: 'Guest Rating', iconType: 'solid', solidIcon: 'star', solidIconColor: '#c9a96e' },
+        ],
+        showFloatingBadge: true,
+        floatingBadgeValue: '12+',
+        floatingBadgeLabel: 'Years of Excellence',
+      },
+      settings: {
+        backgroundColor: '#f5f0e8',
+        animation: {
+          enabled: true,
+          type: 'fade',
+          direction: 'up',
+          speed: 'normal',
+          duration: 700,
+          delay: 100,
+        },
+      },
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    },
+
+    // ========================================
+    // TESTIMONIALS
+    // ========================================
+    {
+      id: 'testimonials',
+      type: 'testimonials',
+      templateId: 'testimonials-modern',
+      order: 6,
+      content: {
+        title: 'Guest Experiences',
+        subtitle: 'Hear from travellers who have experienced the magic of The Grand Retreat',
+        backgroundColor: '#1a1a2e',
+        textColor: '#ffffff',
+        accentColor: '#c9a96e',
+        testimonials: [
+          {
+            id: 'test-1',
+            name: 'Emma & James Whitfield',
+            role: 'Honeymooners',
+            company: 'London, United Kingdom',
+            content: 'Our honeymoon at The Grand Retreat was nothing short of magical. From the moment we arrived, every detail was perfect. The suite was breathtaking, the dining exquisite, and the spa treatments heavenly. We\'ve already booked our anniversary return.',
+            rating: 5,
+            avatar: '',
+          },
+          {
+            id: 'test-2',
+            name: 'The Nakamura Family',
+            role: 'Family Vacation',
+            company: 'Tokyo, Japan',
+            content: 'Travelling with three children can be challenging, but The Grand Retreat made it effortless. The kids\' programme was fantastic, the family suite spacious and beautiful, and the staff went above and beyond to make our little ones feel special.',
+            rating: 5,
+            avatar: '',
+          },
+          {
+            id: 'test-3',
+            name: 'Sofia Bergström',
+            role: 'Solo Traveller',
+            company: 'Stockholm, Sweden',
+            content: 'As a solo traveller, I felt completely at home. The concierge arranged a private safari that was the highlight of my year. The attention to detail and genuine warmth of the staff made this the most memorable trip of my life.',
+            rating: 5,
+            avatar: '',
+          },
+          {
+            id: 'test-4',
+            name: 'Robert & Diana Crawford',
+            role: '25th Anniversary',
+            company: 'Sydney, Australia',
+            content: 'We chose The Grand Retreat for our silver anniversary and it exceeded every expectation. The private dining experience under the stars was pure magic. This is luxury hospitality at its finest — we\'ll be back for our 30th.',
+            rating: 5,
+            avatar: '',
+          },
+        ],
+      },
+      settings: {
+        backgroundColor: '#1a1a2e',
+        animation: {
+          enabled: true,
+          type: 'fade',
+          direction: 'up',
+          speed: 'normal',
+          duration: 600,
+          delay: 100,
+        },
+      },
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    },
+
+    // ========================================
+    // PRICING SECTION
+    // ========================================
+    {
+      id: 'pricing',
+      type: 'pricing',
+      templateId: 'pricing-modern',
+      order: 7,
+      content: {
+        headline: 'Accommodation Packages',
+        subheadline: 'Choose the perfect suite for your dream getaway',
+        badgeText: 'Best Value',
+        showBadge: true,
+        backgroundColor: '#f5f0e8',
+        textColor: '#1a1a2e',
+        accentColor: '#c9a96e',
+        cardBackgroundColor: '#ffffff',
+        columns: 3,
+        showFootnote: true,
+        footnoteText: 'All packages include complimentary breakfast, airport transfers, Wi-Fi, and access to spa and fitness facilities. Rates are per night and subject to seasonal availability.',
+        cards: [
+          {
+            id: 'card-1',
+            title: 'Classic Suite',
+            description: 'Elegant comfort with stunning views',
+            iconType: 'solid',
+            solidIcon: 'bed',
+            solidIconColor: '#c9a96e',
+            price: '$350',
+            period: '/night',
+            features: [
+              { id: 'f1', text: 'King-size luxury suite', included: true },
+              { id: 'f2', text: 'Complimentary breakfast', included: true },
+              { id: 'f3', text: 'Airport transfers', included: true },
+              { id: 'f4', text: 'Wi-Fi access', included: true },
+              { id: 'f5', text: 'Spa access', included: true },
+              { id: 'f6', text: 'Private concierge', included: false },
+              { id: 'f7', text: 'Safari excursion', included: false },
+            ],
+            highlighted: false,
+            ctaText: 'Book Now',
+            cta: { type: 'url', url: '#section-contact' },
+          },
+          {
+            id: 'card-2',
+            title: 'Premium Villa',
+            description: 'Private luxury with personal service',
+            iconType: 'solid',
+            solidIcon: 'home',
+            solidIconColor: '#c9a96e',
+            price: '$650',
+            period: '/night',
+            badgeText: 'Most Popular',
+            features: [
+              { id: 'f1', text: 'Private villa with pool', included: true },
+              { id: 'f2', text: 'Gourmet breakfast & dinner', included: true },
+              { id: 'f3', text: 'Private airport transfers', included: true },
+              { id: 'f4', text: 'High-speed Wi-Fi', included: true },
+              { id: 'f5', text: 'Full spa package', included: true },
+              { id: 'f6', text: 'Dedicated concierge', included: true },
+              { id: 'f7', text: 'Safari excursion', included: false },
+            ],
+            highlighted: true,
+            ctaText: 'Book Now',
+            cta: { type: 'url', url: '#section-contact' },
+          },
+          {
+            id: 'card-3',
+            title: 'Presidential Suite',
+            description: 'The ultimate luxury experience',
+            iconType: 'solid',
+            solidIcon: 'crown',
+            solidIconColor: '#c9a96e',
+            price: '$1,200',
+            period: '/night',
+            features: [
+              { id: 'f1', text: 'Expansive presidential suite', included: true },
+              { id: 'f2', text: 'Full board fine dining', included: true },
+              { id: 'f3', text: 'Luxury vehicle transfers', included: true },
+              { id: 'f4', text: 'Complimentary mini-bar', included: true },
+              { id: 'f5', text: 'Private spa & wellness', included: true },
+              { id: 'f6', text: '24/7 personal concierge', included: true },
+              { id: 'f7', text: 'Private safari experience', included: true },
+            ],
+            highlighted: false,
+            ctaText: 'Book Now',
+            cta: { type: 'url', url: '#section-contact' },
+          },
+        ],
+      },
+      settings: {
+        backgroundColor: '#f5f0e8',
+        animation: {
+          enabled: true,
+          type: 'fade',
+          direction: 'up',
+          speed: 'normal',
+          duration: 600,
+          delay: 100,
+        },
+      },
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    },
+
+    // ========================================
+    // CONTACT SECTION
+    // ========================================
+    {
+      id: 'contact',
+      type: 'contact',
+      templateId: 'contact-modern',
+      order: 8,
+      content: {
+        headline: 'Reserve Your Stay',
+        subheadline: 'Ready to experience the pinnacle of luxury?',
+        description: 'Contact us to check availability or customise your perfect getaway. Our reservations team is available to assist you.',
+        email: 'reservations@thegrandretreat.com',
+        phone: '+1 (555) 789-0123',
+        address: '1 Grand Retreat Drive\nLuxury Bay, Paradise Island 00000',
+        socialLinks: [
+          { platform: 'Facebook', href: 'https://facebook.com/thegrandretreat' },
+          { platform: 'Instagram', href: 'https://instagram.com/thegrandretreat' },
+          { platform: 'Twitter', href: 'https://twitter.com/thegrandretreat' },
+        ],
+        showForm: true,
+        formFields: [
+          { id: 'name', name: 'name', label: 'Full Name', type: 'text', required: true, placeholder: 'Your full name' },
+          { id: 'email', name: 'email', label: 'Email Address', type: 'email', required: true, placeholder: 'your@email.com' },
+          { id: 'checkin', name: 'checkin', label: 'Check-in Date', type: 'date', required: true, placeholder: '' },
+          { id: 'checkout', name: 'checkout', label: 'Check-out Date', type: 'date', required: true, placeholder: '' },
+          {
+            id: 'room-type',
+            name: 'roomType',
+            label: 'Room Type',
+            type: 'select',
+            required: true,
+            options: ['Classic Suite', 'Premium Villa', 'Presidential Suite', 'Not Sure Yet']
+          },
+          { id: 'message', name: 'message', label: 'Special Requests', type: 'textarea', required: false, placeholder: 'Tell us about any special requirements or preferences...' },
+        ],
+        submitButtonText: 'Request Reservation',
+        successMessage: 'Thank you! Our reservations team will confirm your booking within 24 hours.',
+        backgroundColor: '#1a1a2e',
+        textColor: '#f5f0e8',
+        accentColor: '#c9a96e',
+        layout: 'centered',
+        showMap: false,
+      },
+      settings: {
+        backgroundColor: '#1a1a2e',
+        animation: {
+          enabled: true,
+          type: 'fade',
+          direction: 'up',
+          speed: 'normal',
+          duration: 600,
+          delay: 100,
+        },
+      },
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    },
+
+    // ========================================
+    // FOOTER
+    // ========================================
+    {
+      id: generateSectionId('footer'),
+      type: 'footer',
+      templateId: 'footer-modern',
+      order: 9,
+      content: {
+        logoType: 'text',
+        companyName: 'The Grand Retreat',
+        company: {
+          name: 'The Grand Retreat',
+          description: 'An exclusive luxury retreat offering world-class accommodation, exceptional dining, and unforgettable experiences in a breathtaking setting.',
+        },
+        email: 'reservations@thegrandretreat.com',
+        phone: '+1 (555) 789-0123',
+        address: '1 Grand Retreat Drive, Luxury Bay, Paradise Island 00000',
+        businessHours: {
+          enabled: true,
+          showHours: true,
+          title: 'Front Desk Hours',
+          days: [
+            { day: 'Monday - Sunday', hours: '24 Hours', isOpen: true },
+          ],
+          showPublicHolidays: true,
+          publicHolidaysIsOpen: true,
+          publicHolidaysHours: '24 Hours',
+        },
+        links: [
+          {
+            title: 'Accommodation',
+            items: [
+              { label: 'Classic Suite', type: 'url', url: '#section-inventory' },
+              { label: 'Premium Villa', type: 'url', url: '#section-inventory' },
+              { label: 'Presidential Suite', type: 'url', url: '#section-inventory' },
+              { label: 'Special Offers', type: 'url', url: '#' },
+            ],
+          },
+          {
+            title: 'Amenities',
+            items: [
+              { label: 'Spa & Wellness', type: 'url', url: '#section-features' },
+              { label: 'Fine Dining', type: 'url', url: '#section-features' },
+              { label: 'Safari Excursions', type: 'url', url: '#section-features' },
+              { label: 'Concierge', type: 'url', url: '#section-features' },
+            ],
+          },
+          {
+            title: 'Experiences',
+            items: [
+              { label: 'Gallery', type: 'url', url: '#section-about' },
+              { label: 'Guest Reviews', type: 'url', url: '#testimonials' },
+              { label: 'Our Story', type: 'url', url: '#section-about' },
+              { label: 'Contact', type: 'url', url: '#section-contact' },
+            ],
+          },
+        ],
+        socialLinks: [
+          { platform: 'Facebook', href: 'https://facebook.com/thegrandretreat' },
+          { platform: 'Instagram', href: 'https://instagram.com/thegrandretreat' },
+          { platform: 'Twitter', href: 'https://twitter.com/thegrandretreat' },
+        ],
+        copyright: '© 2025 The Grand Retreat. All rights reserved.',
+        backgroundColor: '#1a1a2e',
+        textColor: '#f5f0e8',
+        accentColor: '#c9a96e',
+      },
+      settings: {
+        backgroundColor: '#1a1a2e',
+      },
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    },
+  ],
+};
+
+/**
  * All available page templates
  */
 export const PAGE_TEMPLATES: PageTemplate[] = [
   vehicleDealershipTemplate,
   tutoringCenterTemplate,
   gardenServiceTemplate,
+  luxuryAccommodationTemplate,
 ];
 
 /**

@@ -21,6 +21,7 @@ import {
   Palette,
   Sun,
   Moon,
+  Bed,
 } from 'lucide-react';
 import Link from 'next/link';
 import { getPageTemplates, type PageTemplate, applyPageTemplate } from '@/lib/page-builder/templates/page-templates';
@@ -33,6 +34,7 @@ const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string }>
   portfolio: Briefcase,
   ecommerce: ShoppingCart,
   landing: Rocket,
+  accommodation: Bed,
 };
 
 // Category colors
@@ -42,6 +44,7 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; border: string
   portfolio: { bg: 'bg-purple-50', text: 'text-purple-700', border: 'border-purple-200' },
   ecommerce: { bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200' },
   landing: { bg: 'bg-indigo-50', text: 'text-indigo-700', border: 'border-indigo-200' },
+  accommodation: { bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200' },
 };
 
 // Pre-defined color themes
