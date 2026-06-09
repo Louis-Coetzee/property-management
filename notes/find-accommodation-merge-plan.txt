@@ -1,0 +1,191 @@
+================================================================================
+ FIND ACCOMMODATION → PROPERTY MANAGEMENT MERGE PLAN
+ Source: /Findaccommodation/Findaccommodation
+ Target: /PopertyM
+ Created: 2026-06-09
+ Updated: 2026-06-09
+================================================================================
+
+STRATEGY: Copy FROM Find Accommodation INTO Property Management.
+Find Accommodation becomes the main site for NEXT_PUBLIC_PLATFORM_DOMAIN.
+Property Management multi-tenant system stays 100% intact.
+Fresh start — no data migration needed.
+
+================================================================================
+ STAGE 1: CONVEX SCHEMA + FUNCTIONS + PLATFORM PAGES
+ Status: ✅ COMPLETE
+================================================================================
+
+COMPLETED:
+  ✅ Schema tables added to convex/schema.ts:
+     - listings, listingAvailability, accommodationInquiries,
+       inquiryNotes, inquiryEmails, alerts, analytics,
+       savedItems, newsletterSubscriptions, location
+
+  ✅ Convex functions created:
+     - convex/faListings.ts (company-scoped CRUD)
+     - convex/accommodationInquiries.ts (booking inquiries)
+     - convex/analytics.ts, locations.ts, newsletter.ts
+     - convex/savedItems.ts, availability.ts, listings.ts
+     - convex/alerts.ts, contact.ts
+
+  ✅ Platform pages created at app/ root level:
+     - app/contact/page.tsx + app/api/contact-form/route.ts
+     - app/advertise/page.tsx
+     - app/about/page.tsx
+     - app/terms/page.tsx
+     - app/privacy/page.tsx
+     - app/listings/page.tsx + app/listings/[id]/page.tsx
+     - app/saved-items/page.tsx
+
+  ✅ Root-level components:
+     - components/platform/PlatformNavbar.tsx
+     - components/platform/PlatformFooter.tsx
+     - components/platform/RootConvexProvider.tsx
+
+  ✅ app/layout.tsx updated with RootConvexProvider + metadata
+
+  ✅ AccommodationLandingPage.tsx auth links fixed (all use authBase)
+
+  ✅ Company listings management page:
+     - app/[domain]/companies/[companyId]/listings/page.tsx
+     - app/[domain]/companies/[companyId]/manage/page.tsx updated
+
+================================================================================
+ STAGE 2: ESSENTIAL [DOMAIN] COMPONENTS
+ Status: 🔄 IN PROGRESS
+================================================================================
+
+Copy to components/find-accommodation/ subfolder.
+These are needed for [domain] routes (company dashboards, bookings, etc.)
+
+PRIORITY 1 — Listing display:
+  - listing-card.tsx (main listing card for browse/search)
+  - user-listing-card.tsx (user's own listing card)
+  - listing-filters/ (filter components for search)
+
+PRIORITY 2 — Forms:
+  - add-listing-form.tsx (create new listing — company dashboard)
+  - edit-listing-form.tsx (edit listing — company dashboard)
+
+PRIORITY 3 — Booking:
+  - payment-gateway-selector.tsx (PayFast/Paygate selection)
+
+PRIORITY 4 — Media (if different from PM's):
+  - media-library.tsx
+  - media-library-modal.tsx
+
+NOT NEEDED (PM has equivalents):
+  - navbar.tsx / footer.tsx → using PlatformNavbar/PlatformFooter
+  - auth components → PM's auth system
+  - providers → PM's providers
+
+================================================================================
+ STAGE 3: [DOMAIN] PAGE ROUTES
+ Status: ⏳ PENDING
+================================================================================
+
+Copy FA page routes under app/[domain]/ for company-specific functionality:
+  - app/[domain]/listings/ (company listings management)
+  - app/[domain]/bookings/ (booking management)
+  - app/[domain]/inquiries/ (inquiry management)
+  - app/[domain]/saved-items/ (saved listings per user)
+  - app/[domain]/alerts/ (search alerts per user)
+  - app/[domain]/add-listing/ (add new listing)
+
+Note: Some of these may already exist or be partially implemented from Stage 1.
+
+================================================================================
+ STAGE 4: API ROUTES + LIB
+ Status: ⏳ PENDING
+================================================================================
+
+API ROUTES (FA-specific, not already in PM):
+  - app/api/paygate/ (Paygate payment integration — NEW for PM)
+  - app/api/send-booking-email/ (booking email notifications)
+  - app/api/send-admin-booking-email/ (admin booking notifications)
+  - app/api/send-owner-booking-email/ (owner booking notifications)
+  - app/api/send-inquiry-email/ (inquiry email)
+  - app/api/send-inquiry-confirmation-email/ (inquiry confirmation)
+  - app/api/send-inquiry-notification-email/ (inquiry notification)
+  - app/api/send-payment-details-email/ (payment details)
+  - app/api/send-alert-email/ (alert notifications)
+  - app/api/send-alert-creation-email/ (alert creation confirmation)
+  - app/api/analytics/ (analytics tracking endpoints)
+
+Already done:
+  ✅ app/api/contact-form/route.ts
+
+LIB FILES to copy:
+  - lib/paygate-utils.ts (Paygate integration — NEW)
+  - lib/payfast-config.ts (compare with PM's — extend)
+  - lib/payment-utils.ts (payment utilities)
+  - lib/payment-confirmation-templates.ts (email templates)
+  - lib/pdf-utils.ts (PDF generation)
+  - lib/email-components.ts (email component helpers)
+  - lib/email-templates.ts (email templates)
+
+SKIP (PM already has):
+  - lib/auth.ts, lib/utils.ts, lib/convex.ts
+
+================================================================================
+ STAGE 5: FINAL INTEGRATION + CLEANUP
+ Status: ⏳ PENDING
+================================================================================
+
+5A. Copy remaining public assets (icons, manifest, brochure)
+5B. Update package.json if any new dependencies needed
+5C. Ensure globals.css has FA styles
+5D. Verify Paygate integration works
+5E. Test complete flow: browse → search → book → pay
+5F. Update any hardcoded URLs
+
+================================================================================
+ STAGE 6: VERIFY BUILD
+ Status: ⏳ PENDING
+================================================================================
+
+6A. Run: npm run build
+6B. Fix any TypeScript errors
+6C. Fix any import errors
+6D. Fix any missing dependencies
+6E. Confirm no PM functionality is broken
+6F. Confirm FA functionality works on platform domain
+
+================================================================================
+ CONFLICT RESOLUTION NOTES
+================================================================================
+
+1. CONVEX SCHEMA TABLES:
+   - `inquiries`: PM has form-based, FA has booking-based → SEPARATE tables
+     (PM: inquiries, FA: accommodationInquiries)
+   - `pages`: PM has website pages → REUSE PM's
+   - `sections`: Both have similar → REUSE PM's
+   - `bookings`: PM has appointment bookings → FA needs separate (future)
+   - `mediaLibrary`: REUSE PM's (more feature-rich)
+   - `mediaCategories`: REUSE PM's
+
+2. CONVEX FUNCTIONS:
+   - `auth.ts`: KEEP PM's
+   - `users.ts`: KEEP PM's
+   - `admin.ts`: KEEP PM's, extend if needed
+   - `media.ts`: KEEP PM's
+
+3. COMPONENTS:
+   - `auth/`: KEEP PM's auth components
+   - `ui/`: MERGE — add FA-specific UI components
+   - `providers/`: KEEP PM's providers
+
+4. API ROUTES:
+   - `auth/`: KEEP PM's
+   - `payfast/`: EXTEND PM's with FA config
+   - `user/`: KEEP PM's
+
+5. ROUTING:
+   - Platform pages (contact, about, advertise, terms, privacy, listings):
+     → Root app/ level (not under [domain])
+   - Company-specific pages (dashboard, bookings, inquiries):
+     → Under app/[domain]/ routes
+   - Auth pages: PM's auth system at app/[domain]/auth/
+
+================================================================================

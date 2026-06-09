@@ -268,3 +268,30 @@ export async function deleteImageFromCloudflare(imageId: string): Promise<{ succ
     return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
   }
 }
+
+const CLOUDFLARE_ACCOUNT_HASH = process.env.NEXT_PUBLIC_CLOUDFLARE_ACCOUNT_HASH || env.CLOUDFLARE_DELIVERY_ACCOUNT_ID || '';
+
+export function getCloudflareImageUrl(imageIdOrUrl: string | null | undefined, variant: string = 'public'): string | null {
+  if (!imageIdOrUrl) return null;
+  if (imageIdOrUrl.startsWith('http')) {
+    if (imageIdOrUrl.includes('imagedelivery.net')) return imageIdOrUrl;
+    return imageIdOrUrl;
+  }
+  return `https://imagedelivery.net/${CLOUDFLARE_ACCOUNT_HASH}/${imageIdOrUrl}/${variant}`;
+}
+
+export function getOptimizedImageProps(
+  src: string | null | undefined,
+  alt: string = 'Image',
+  variant: string = 'public'
+) {
+  const imageUrl = getCloudflareImageUrl(src, variant);
+  return {
+    src: imageUrl || '/placeholder-image.svg',
+    alt,
+    unoptimized: true,
+    onError: (e: any) => {
+      e.target.src = '/placeholder-image.svg';
+    }
+  };
+}

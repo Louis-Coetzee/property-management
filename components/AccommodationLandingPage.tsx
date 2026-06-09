@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useAuth } from '@/app/[domain]/AuthProvider';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { getPlatformDomain } from '@/lib/domain';
 
 const features = [
   {
@@ -68,6 +69,8 @@ const features = [
 export function AccommodationLandingPage({ domain }: { domain: string }) {
   const { user, logout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const platformDomain = getPlatformDomain();
+  const authBase = `/${domain}`;
 
   const handleLogout = async () => {
     try {
@@ -93,20 +96,20 @@ export function AccommodationLandingPage({ domain }: { domain: string }) {
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-1">
               <Link
-                href={`/auth/register`}
+                href={`${authBase}/auth/register`}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-gray-100 hover:text-blue-900 transition-all duration-200"
               >
                 Get Started
               </Link>
               <Link
-                href={`/auth/login`}
+                href={`${authBase}/auth/login`}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-gray-100 hover:text-blue-900 transition-all duration-200"
               >
                 Sign In
               </Link>
               {user && (
                 <Link
-                  href={`/dashboard`}
+                  href={`${authBase}/dashboard`}
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-amber-700 hover:bg-amber-50 transition-all duration-200"
                 >
                   Dashboard
@@ -143,14 +146,14 @@ export function AccommodationLandingPage({ domain }: { domain: string }) {
                     </div>
                     <nav className="flex-1 space-y-1">
                       <Link
-                        href={`/auth/register`}
+                        href={`${authBase}/auth/register`}
                         onClick={() => setIsMobileMenuOpen(false)}
                         className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-white bg-slate-800 hover:bg-slate-700 transition-all duration-200"
                       >
                         Get Started
                       </Link>
                       <Link
-                        href={`/auth/login`}
+                        href={`${authBase}/auth/login`}
                         onClick={() => setIsMobileMenuOpen(false)}
                         className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-700 hover:bg-blue-50 hover:text-blue-900 transition-all duration-200"
                       >
@@ -159,7 +162,7 @@ export function AccommodationLandingPage({ domain }: { domain: string }) {
                       </Link>
                       {user && (
                         <Link
-                          href={`/dashboard`}
+                          href={`${authBase}/dashboard`}
                           onClick={() => setIsMobileMenuOpen(false)}
                           className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-amber-700 hover:bg-amber-50 transition-all duration-200"
                         >
@@ -212,14 +215,14 @@ export function AccommodationLandingPage({ domain }: { domain: string }) {
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
-                href={`/auth/register`}
+                href={`${authBase}/auth/register`}
                 className="inline-flex items-center gap-2 px-8 py-4 bg-white text-slate-900 font-semibold rounded-xl hover:bg-slate-100 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 Get Started
                 <ArrowRight className="h-5 w-5" />
               </Link>
               <Link
-                href={`/auth/login`}
+                href={`${authBase}/auth/login`}
                 className="inline-flex items-center gap-2 px-8 py-4 bg-white/10 text-white font-semibold rounded-xl hover:bg-white/20 transition-all duration-200 border border-white/20"
               >
                 Sign In
@@ -283,7 +286,7 @@ export function AccommodationLandingPage({ domain }: { domain: string }) {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
-              href={`/auth/register`}
+              href={`${authBase}/auth/register`}
               className="inline-flex items-center gap-2 px-8 py-4 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition-all duration-200 shadow-lg hover:shadow-xl"
             >
               Get Started
@@ -301,8 +304,8 @@ export function AccommodationLandingPage({ domain }: { domain: string }) {
               <span className="text-2xl font-bold"><span className="text-green-500">Find</span> <span className="text-white">Accommodation</span></span>
             </div>
             <div className="flex items-center gap-6 text-slate-400 text-sm">
-              <Link href={`/${domain}/privacy`} className="hover:text-white transition-colors">Privacy Policy</Link>
-              <Link href={`/${domain}/terms`} className="hover:text-white transition-colors">Terms of Service</Link>
+              <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+              <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
             </div>
             <p className="text-slate-500 text-sm">
               &copy; 2025 Find Accommodation. All rights reserved.

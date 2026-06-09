@@ -30,6 +30,7 @@ import {
   Calendar,
   Truck,
   Briefcase,
+  Home,
 } from 'lucide-react';
 import { NavigationMenuButton, NavigationSideSheet } from '@/components/navigation/NavigationSideSheet';
 import { hasCardAccess } from '@/lib/card-permissions';
@@ -127,6 +128,17 @@ export default function CompanyManagePage() {
       gradient: 'bg-gradient-to-br from-pink-500 to-pink-700',
       hoverBorder: 'hover:border-pink-300',
       hoverShadow: 'hover:shadow-lg hover:shadow-pink-500/20',
+    }]),
+    ...([{
+      id: 'listings',
+      category: 'listings',
+      title: 'Listings',
+      description: 'Property accommodation listings',
+      icon: Home,
+      href: `/companies/${companyId}/listings`,
+      gradient: 'bg-gradient-to-br from-emerald-500 to-emerald-700',
+      hoverBorder: 'hover:border-emerald-300',
+      hoverShadow: 'hover:shadow-lg hover:shadow-emerald-500/20',
     }]),
     ...(canAccessCard('departments') ? [{
       id: 'departments',
@@ -334,6 +346,7 @@ export default function CompanyManagePage() {
     ...(isBusinessToolsEnabled ? [{ id: 'crm', label: 'CRM' }] : []),
     ...(isOnlineStoreEnabled ? [{ id: 'store', label: 'Online store' }] : []),
     ...(isBookingsAppEnabled ? [{ id: 'bookings', label: 'Booking system' }] : []),
+    { id: 'listings', label: 'Listings' },
     ...(true ? [{ id: 'marketing', label: 'Marketing' }] : []),
   ];
 

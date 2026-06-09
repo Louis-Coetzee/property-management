@@ -1769,4 +1769,324 @@ export default defineSchema({
     .index("by_ip_email", ["ipAddress", "email"])
     .index("by_ip", ["ipAddress"])
     .index("by_email", ["email"]),
+
+  // ========================================================================
+  // FIND ACCOMMODATION TABLES
+  // ========================================================================
+
+  // Accommodation listings
+  listings: defineTable({
+    title: v.string(),
+    description: v.string(),
+    shortDescription: v.optional(v.string()),
+    propertyType: v.string(),
+    bedrooms: v.number(),
+    bathrooms: v.number(),
+    maxGuests: v.number(),
+    location: v.object({
+      country: v.string(),
+      province: v.string(),
+      city: v.string(),
+      suburb: v.optional(v.string()),
+      address: v.string(),
+      buildingName: v.optional(v.string()),
+      locationId: v.optional(v.string()),
+      postalCode: v.optional(v.string()),
+      streetAddress: v.optional(v.string()),
+      unitNumber: v.optional(v.string()),
+    }),
+    pricePerNight: v.number(),
+    currency: v.string(),
+    cleaningFee: v.union(v.number(), v.null()),
+    securityDeposit: v.union(v.number(), v.null()),
+    amenities: v.array(v.string()),
+    images: v.array(v.string()),
+    featuredImage: v.union(v.string(), v.null()),
+    availableFrom: v.string(),
+    availableTo: v.string(),
+    minimumStay: v.number(),
+    maximumStay: v.union(v.number(), v.null()),
+    contactEmail: v.optional(v.string()),
+    contactPhone: v.optional(v.string()),
+    houseRules: v.optional(v.string()),
+    checkInTime: v.optional(v.string()),
+    checkOutTime: v.optional(v.string()),
+    cancellationPolicy: v.optional(v.string()),
+    agents: v.optional(v.array(v.object({
+      id: v.id("users"),
+      firstName: v.string(),
+      lastName: v.string(),
+      email: v.string(),
+      contactNumber: v.optional(v.string()),
+    }))),
+    notificationsEnabled: v.optional(v.boolean()),
+    paymentDetails: v.optional(v.object({
+      enabled: v.optional(v.boolean()),
+      bankingDetails: v.optional(v.object({
+        bankName: v.optional(v.string()),
+        accountHolder: v.optional(v.string()),
+        accountNumber: v.optional(v.string()),
+        branchCode: v.optional(v.string()),
+        accountType: v.optional(v.string()),
+        swiftCode: v.optional(v.string()),
+      })),
+      paymentMethods: v.optional(v.array(v.string())),
+      depositRequirements: v.optional(v.object({
+        bookingDeposit: v.optional(v.union(v.number(), v.null())),
+        damageDepositAmount: v.optional(v.union(v.number(), v.null())),
+        keyDepositAmount: v.optional(v.union(v.number(), v.null())),
+      })),
+      paymentTerms: v.optional(v.object({
+        fullPaymentDue: v.optional(v.string()),
+        depositDue: v.optional(v.string()),
+        refundPolicy: v.optional(v.string()),
+        lateCancellationFee: v.optional(v.union(v.number(), v.null())),
+        noShowFee: v.optional(v.union(v.number(), v.null())),
+        paymentSecuredOnly: v.optional(v.boolean()),
+      })),
+      additionalFees: v.optional(v.array(v.object({
+        name: v.string(),
+        amount: v.number(),
+        type: v.union(v.literal("percentage"), v.literal("fixed")),
+        mandatory: v.boolean(),
+        description: v.optional(v.string()),
+      }))),
+      paymentInstructions: v.optional(v.string()),
+    })),
+    status: v.union(
+      v.literal("active"),
+      v.literal("inactive"),
+      v.literal("pending"),
+      v.literal("suspended")
+    ),
+    isVerified: v.boolean(),
+    isFeatured: v.boolean(),
+    views: v.union(v.number(), v.null()),
+    inquiries: v.union(v.number(), v.null()),
+    contactViews: v.optional(v.union(v.number(), v.null())),
+    ownerId: v.id("users"),
+    companyId: v.optional(v.string()),
+    createdBy: v.optional(v.id("users")),
+    updatedBy: v.optional(v.id("users")),
+    createdAt: v.string(),
+    updatedAt: v.string(),
+  })
+    .index("by_owner", ["ownerId"])
+    .index("by_status", ["status"])
+    .index("by_property_type", ["propertyType"])
+    .index("by_location_city", ["location.city"])
+    .index("by_location_province", ["location.province"])
+    .index("by_company", ["companyId"]),
+
+  // Listing availability for managing booking dates
+  listingAvailability: defineTable({
+    listingId: v.id("listings"),
+    date: v.string(),
+    status: v.union(
+      v.literal("available"),
+      v.literal("booked"),
+      v.literal("blocked")
+    ),
+    notes: v.optional(v.string()),
+    createdAt: v.string(),
+    updatedAt: v.string(),
+  })
+    .index("by_listing", ["listingId"])
+    .index("by_listing_and_date", ["listingId", "date"])
+    .index("by_date", ["date"]),
+
+  // Accommodation booking inquiries (different from form-based inquiries)
+  accommodationInquiries: defineTable({
+    listingId: v.id("listings"),
+    listingTitle: v.string(),
+    bookingNumber: v.string(),
+    guestId: v.optional(v.id("users")),
+    hostId: v.id("users"),
+    guestName: v.string(),
+    guestEmail: v.string(),
+    guestPhone: v.optional(v.string()),
+    checkInDate: v.string(),
+    checkOutDate: v.string(),
+    numberOfGuests: v.number(),
+    numberOfAdults: v.optional(v.number()),
+    numberOfChildren: v.optional(v.number()),
+    totalNights: v.number(),
+    pricePerNight: v.number(),
+    totalAmount: v.number(),
+    currency: v.string(),
+    cleaningFee: v.optional(v.number()),
+    securityDeposit: v.optional(v.number()),
+    message: v.optional(v.string()),
+    status: v.union(
+      v.literal("pending"),
+      v.literal("approved"),
+      v.literal("declined"),
+      v.literal("cancelled"),
+      v.literal("completed"),
+      v.literal("confirmed"),
+      v.literal("in-progress"),
+      v.literal("checked-in"),
+      v.literal("checked-out"),
+      v.literal("payment-pending"),
+      v.literal("payment-received")
+    ),
+    companyId: v.optional(v.string()),
+    createdAt: v.string(),
+    updatedAt: v.string(),
+    responseMessage: v.optional(v.string()),
+    respondedAt: v.optional(v.string()),
+  })
+    .index("by_listing", ["listingId"])
+    .index("by_guest", ["guestId"])
+    .index("by_host", ["hostId"])
+    .index("by_status", ["status"])
+    .index("by_bookingNumber", ["bookingNumber"])
+    .index("by_company", ["companyId"]),
+
+  // Notes on accommodation inquiries
+  inquiryNotes: defineTable({
+    inquiryId: v.id("accommodationInquiries"),
+    userId: v.id("users"),
+    note: v.string(),
+    createdAt: v.string(),
+  })
+    .index("by_inquiry", ["inquiryId"])
+    .index("by_user", ["userId"])
+    .index("by_inquiry_and_created", ["inquiryId", "createdAt"]),
+
+  // Email tracking for accommodation inquiries
+  inquiryEmails: defineTable({
+    inquiryId: v.id("accommodationInquiries"),
+    companyId: v.optional(v.string()),
+    senderName: v.string(),
+    senderEmail: v.string(),
+    recipientEmail: v.string(),
+    message: v.string(),
+    sentBy: v.id("users"),
+    sentAt: v.string(),
+    emailSubject: v.string(),
+    status: v.union(
+      v.literal("sent"),
+      v.literal("delivered"),
+      v.literal("failed"),
+      v.literal("bounced")
+    ),
+    resendId: v.optional(v.string()),
+    pdfAttached: v.boolean(),
+    metadata: v.optional(v.object({
+      userAgent: v.optional(v.string()),
+      ipAddress: v.optional(v.string()),
+    })),
+  })
+    .index("by_inquiry", ["inquiryId"])
+    .index("by_company", ["companyId"])
+    .index("by_sent_by", ["sentBy"])
+    .index("by_sent_at", ["sentAt"])
+    .index("by_recipient", ["recipientEmail"]),
+
+  // User search alerts for accommodation
+  alerts: defineTable({
+    userId: v.id("users"),
+    name: v.string(),
+    location: v.string(),
+    priceMin: v.optional(v.number()),
+    priceMax: v.optional(v.number()),
+    listingTypes: v.optional(v.array(v.string())),
+    maxGuests: v.optional(v.number()),
+    facilities: v.optional(v.array(v.string())),
+    isActive: v.boolean(),
+    frequency: v.string(),
+    lastSent: v.optional(v.string()),
+    createdAt: v.string(),
+    updatedAt: v.string(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_active", ["userId", "isActive"])
+    .index("by_active", ["isActive"]),
+
+  // Analytics tracking for accommodation
+  analytics: defineTable({
+    eventType: v.union(
+      v.literal("page_view"),
+      v.literal("contact_view"),
+      v.literal("contact_form_submission"),
+      v.literal("listing_contact_form"),
+      v.literal("home_page_view"),
+      v.literal("contact_page_view"),
+      v.literal("listing_page_view")
+    ),
+    entityId: v.optional(v.union(v.id("listings"), v.id("users"), v.string())),
+    entityType: v.optional(v.string()),
+    userId: v.optional(v.id("users")),
+    sessionId: v.optional(v.string()),
+    metadata: v.optional(v.object({
+      listingId: v.optional(v.id("listings")),
+      listingTitle: v.optional(v.string()),
+      hostId: v.optional(v.id("users")),
+      page: v.optional(v.string()),
+      referrer: v.optional(v.string()),
+      userAgent: v.optional(v.string()),
+      ipAddress: v.optional(v.string()),
+      location: v.optional(v.string()),
+      formData: v.optional(v.any()),
+      contactEmail: v.optional(v.string()),
+      contactPhone: v.optional(v.string()),
+    })),
+    timestamp: v.string(),
+    createdAt: v.string(),
+  })
+    .index("by_event_type", ["eventType"])
+    .index("by_entity", ["entityId"])
+    .index("by_user", ["userId"])
+    .index("by_session", ["sessionId"])
+    .index("by_timestamp", ["timestamp"])
+    .index("by_created_at", ["createdAt"]),
+
+  // Saved accommodation listings
+  savedItems: defineTable({
+    userId: v.id("users"),
+    listingId: v.id("listings"),
+    createdAt: v.string(),
+    updatedAt: v.string(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_listing", ["listingId"])
+    .index("by_user_and_listing", ["userId", "listingId"]),
+
+  // Newsletter subscriptions
+  newsletterSubscriptions: defineTable({
+    email: v.string(),
+    subscribedAt: v.string(),
+    isActive: v.boolean(),
+    source: v.optional(v.string()),
+    userAgent: v.optional(v.string()),
+    ipAddress: v.optional(v.string()),
+  })
+    .index("by_email", ["email"])
+    .index("by_active", ["isActive"])
+    .index("by_subscribed_at", ["subscribedAt"]),
+
+  // South African location autocomplete
+  location: defineTable({
+    country: v.string(),
+    province: v.string(),
+    district: v.string(),
+    city: v.string(),
+    suburb: v.string(),
+    searchText: v.string(),
+    isActive: v.boolean(),
+    createdAt: v.string(),
+    updatedAt: v.string(),
+  })
+    .index("by_search_text", ["searchText"])
+    .index("by_suburb", ["suburb"])
+    .index("by_city", ["city"])
+    .index("by_district", ["district"])
+    .index("by_province", ["province"])
+    .index("by_country", ["country"])
+    .index("by_active", ["isActive"])
+    .searchIndex("search_locations", {
+      searchField: "searchText",
+      filterFields: ["isActive", "province", "country", "city", "district"],
+    }),
 });

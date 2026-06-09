@@ -88,7 +88,7 @@ export function Navbar({ domain }: NavbarProps) {
     if (isRefreshTech) {
       return (
         <span className="text-2xl font-bold">
-          <span className="text-green-600">Refresh</span> <span className="text-gray-500">Tech</span>
+          <span className="text-green-600">Find</span> <span className="text-gray-500">Accommodation</span>
         </span>
       );
     }
