@@ -6,6 +6,7 @@ import { DomainLayoutWrapper } from './DomainLayoutWrapper';
 import { fetchQuery } from 'convex/nextjs';
 import { api } from '@/convex/_generated/api';
 import { isPlatformDomain } from '@/lib/domain';
+import { redirect } from 'next/navigation';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -19,12 +20,20 @@ export default async function DomainLayout({
 
   const isDefaultDomain = isPlatformDomain(domain);
 
-  // Get website data for favicon and SEO
+  if (isDefaultDomain) {
+    return (
+      <>
+        <link rel="icon" href="/favicon.svg" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        {children}
+      </>
+    );
+  }
+
   let faviconUrl: string | null = null;
   let websiteName = domain;
 
   try {
-    // Get website by domain (checks domainMappings first, then websites.domains)
     const website = await fetchQuery(api.websites.getWebsiteByDomainPublic, { domain });
     
     if (website) {
@@ -35,19 +44,8 @@ export default async function DomainLayout({
     console.error('Error fetching website for favicon:', error);
   }
 
-  // Use default favicon for the main domain unless website has custom favicon
-  if (isDefaultDomain && !faviconUrl) {
-    faviconUrl = '/favicon.svg';
-  }
-
-  // IMPORTANT: When adding links within [domain] routes, DO NOT include ${domain} in hrefs
-  // Next.js automatically handles the domain in the URL path.
-  // WRONG: href={`/${domain}/companies`}  -> Creates double domain
-  // RIGHT: href={`/companies`}             -> Correct path
-
   return (
     <>
-      {/* Dynamic favicon */}
       {faviconUrl && (
         <>
           <link rel="icon" type="image/png" href={faviconUrl} />

@@ -1,18 +1,34 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { PageRenderer } from '@/components/page-builder/renderer/PageRenderer';
 import { parsePageContent } from '@/lib/page-builder/hooks/usePageContent';
 import { Loader2 } from 'lucide-react';
+import { isPlatformDomain } from '@/lib/domain';
 
 export default function SlugPagePage() {
   const params = useParams();
+  const router = useRouter();
   const domain = params.domain as string;
   const slug = params.slug as string;
 
-  // Query the website data directly (like home page does)
+  useEffect(() => {
+    if (isPlatformDomain(domain)) {
+      router.replace(`/${slug}`);
+    }
+  }, [domain, slug, router]);
+
+  if (isPlatformDomain(domain)) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+      </div>
+    );
+  }
+
   const website = useQuery(api.websites.getWebsiteByDomainPublic, { domain });
 
   // Query to get page by website and slug (public query)
