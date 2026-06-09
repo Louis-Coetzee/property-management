@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { fetchMutation } from 'convex/nextjs';
+import { fetchMutation, fetchQuery } from 'convex/nextjs';
 import { api } from '@/convex/_generated/api';
 
 export async function POST(request: NextRequest) {
@@ -10,18 +10,27 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Booking number is required' }, { status: 400 });
     }
 
-    const inquiry = await fetchMutation(api.accommodationBookings.findBookingByCode, {
-      bookingCode: bookingNumber
+    console.log('[MARK-PAID] Processing booking:', bookingNumber);
+
+    // Find the inquiry by booking number
+    const inquiry = await fetchQuery(api.accommodationInquiries.findInquiryByBookingNumber, {
+      bookingNumber
     } as any);
 
     if (!inquiry) {
-      return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
+      console.error('[MARK-PAID] Inquiry not found for booking:', bookingNumber);
+      return NextResponse.json({ error: 'Inquiry not found' }, { status: 404 });
     }
 
-    await fetchMutation(api.accommodationBookings.updateBookingStatus, {
-      bookingId: inquiry._id,
-      status: 'confirmed',
+    console.log('[MARK-PAID] Found inquiry:', inquiry._id, 'current status:', inquiry.status);
+
+    // Update the inquiry status to payment-received
+    await fetchMutation(api.accommodationInquiries.updateInquiryStatus, {
+      inquiryId: inquiry._id,
+      status: 'payment-received'
     } as any);
+
+    console.log('[MARK-PAID] Successfully marked as payment-received');
 
     return NextResponse.json({
       success: true,
