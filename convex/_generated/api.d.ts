@@ -59,6 +59,7 @@ import type * as security from "../security.js";
 import type * as services from "../services.js";
 import type * as shipping from "../shipping.js";
 import type * as siteSettings from "../siteSettings.js";
+import type * as sites from "../sites.js";
 import type * as suppliers from "../suppliers.js";
 import type * as teamMemberActions from "../teamMemberActions.js";
 import type * as teamMembers from "../teamMembers.js";
@@ -125,6 +126,7 @@ declare const fullApi: ApiFromModules<{
   services: typeof services;
   shipping: typeof shipping;
   siteSettings: typeof siteSettings;
+  sites: typeof sites;
   suppliers: typeof suppliers;
   teamMemberActions: typeof teamMemberActions;
   teamMembers: typeof teamMembers;

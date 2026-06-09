@@ -101,19 +101,31 @@ PENDING (Convex deploy required):
   ✅ TypeScript typecheck: 0 errors
 
 ================================================================================
- STAGE 3: [DOMAIN] PAGE ROUTES
- Status: ⏳ PENDING
+ STAGE 3: PAGE ROUTES + BOOKING FLOW
+ Status: ✅ COMPLETE
 ================================================================================
 
-Copy FA page routes under app/[domain]/ for company-specific functionality:
-  - app/[domain]/listings/ (company listings management)
-  - app/[domain]/bookings/ (booking management)
-  - app/[domain]/inquiries/ (inquiry management)
-  - app/[domain]/saved-items/ (saved listings per user)
-  - app/[domain]/alerts/ (search alerts per user)
-  - app/[domain]/add-listing/ (add new listing)
+ROOT-LEVEL PAGES (not under [domain]):
+  ✅ app/listings/[id]/availability/page.tsx — calendar availability management
+  ✅ app/bookings/new/page.tsx — multi-step booking (dates → guest info → confirm)
+  ✅ app/bookings-requests/page.tsx — host-facing booking inquiry management
+  ✅ app/bookings/[bookingCode]/page.tsx — booking detail + PDF download
+  ✅ app/payment/booking/checkout/page.tsx — PayFast/Paygate checkout
+  ✅ app/payment/booking/success/page.tsx — booking success + confirmation
+  ✅ app/payment/booking/cancel/page.tsx — payment cancelled page
+  ✅ app/saved-items/page.tsx — saved listings with search/sort/unsave
 
-Note: Some of these may already exist or be partially implemented from Stage 1.
+CONVEX:
+  ✅ New accommodationBookings table in schema (separate from appointment bookings)
+  ✅ convex/accommodationBookings.ts — createBooking, getBookingByCode,
+     getUserBookings, getListingBookings, updateBookingStatus, cancelBooking
+
+INFRASTRUCTURE FIXES:
+  ✅ components/platform/RootAuthProvider.tsx — auth for root-level pages
+  ✅ app/layout.tsx updated with RootAuthProvider wrapper
+  ✅ Root-level pages use useRootAuth instead of useAuth
+  ✅ bookings/new wrapped with Suspense (useSearchParams requirement)
+  ✅ pnpm-lock.yaml updated for Vercel deployment
 
 ================================================================================
  STAGE 4: API ROUTES + LIB

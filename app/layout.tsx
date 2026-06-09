@@ -5,16 +5,39 @@ import { CartProvider } from '@/context/CartContext';
 import { CurrencyProvider } from '@/context/CurrencyContext';
 import { RootConvexProvider } from '@/components/platform/RootConvexProvider';
 import { RootAuthProvider } from '@/components/platform/RootAuthProvider';
+import PlatformNavbar from '@/components/platform/PlatformNavbar';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Find Accommodation',
-  description: 'Your trusted platform for finding and listing holiday accommodation across South Africa'};
+  title: {
+    default: 'Find Accommodation | Holiday Properties & Guest Houses in South Africa',
+    template: '%s | Find Accommodation',
+  },
+  description: 'Find and book holiday accommodations across South Africa. Commission-based platform showcasing guest houses, holiday homes, lodges, and more. No setup costs for property owners.',
+  keywords: [
+    'accommodation South Africa',
+    'holiday accommodation',
+    'guest house South Africa',
+    'holiday homes',
+    'lodges',
+    'self-catering accommodation',
+    'vacation rentals',
+    'Find Accommodation',
+  ],
+  openGraph: {
+    type: 'website',
+    locale: 'en_ZA',
+    title: 'Find Accommodation | Holiday Properties & Guest Houses in South Africa',
+    description: 'Find and book holiday accommodations across South Africa.',
+    siteName: 'Find Accommodation',
+  },
+};
 
 export default function RootLayout({
-  children}: {
+  children,
+}: {
   children: React.ReactNode;
 }) {
   return (
@@ -25,6 +48,7 @@ export default function RootLayout({
           <RootAuthProvider>
             <CurrencyProvider>
               <CartProvider>
+                <PlatformNavbar />
                 {children}
               </CartProvider>
             </CurrencyProvider>

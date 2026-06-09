@@ -1,117 +1,207 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Menu, X, User, LogOut, LayoutDashboard, Heart } from 'lucide-react';
-import { getPlatformDomain } from '@/lib/domain';
+import { useRouter, usePathname } from 'next/navigation';
+import { Menu, LogOut } from 'lucide-react';
+import { useRootAuth } from '@/components/platform/RootAuthProvider';
+import { cn } from '@/lib/utils';
+import toast from 'react-hot-toast';
 
-export default function PlatformNavbar() {
-  const [isOpen, setIsOpen] = useState(false);
+const PlatformNavbar = () => {
+  const { user, loading } = useRootAuth();
+  const router = useRouter();
   const pathname = usePathname();
-  const platformDomain = getPlatformDomain();
+  const [isOpen, setIsOpen] = useState(false);
 
-  const navLinks = [
-    { href: '/listings', label: 'Browse Listings' },
+  const handleLogout = async () => {
+    try {
+      localStorage.removeItem('sessionToken');
+      document.cookie = 'sessionToken=; path=/; max-age=0';
+      toast.success('You have been logged out successfully.');
+      router.push('/');
+      window.location.reload();
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast.error('Failed to logout. Please try again.');
+    }
+  };
+
+  const navItems = user ? [
+    { href: '/', label: 'Browse' },
     { href: '/advertise', label: 'Advertise' },
-    { href: '/about', label: 'About' },
+    { href: '/contact', label: 'Contact' },
+  ] : [
+    { href: '/', label: 'Browse' },
+    { href: '/advertise', label: 'Advertise' },
     { href: '/contact', label: 'Contact' },
   ];
 
+  const isActiveLink = (href: string) => {
+    if (href === '/') return pathname === '/';
+    return pathname === href || pathname.startsWith(href);
+  };
+
   return (
-    <nav className="bg-white border-b border-stone-200 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-[#16911c] flex items-center justify-center">
-              <span className="text-white font-bold text-sm">FA</span>
-            </div>
-            <span className="font-semibold text-stone-900 text-lg hidden sm:block">
-              Find Accommodation
-            </span>
+    <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 border-b border-stone-200/60">
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
+        .serif { font-family: 'Cormorant Garamond', Georgia, serif; }
+        .sans { font-family: 'DM Sans', system-ui, sans-serif; }
+      `}</style>
+      <nav className="sans container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex h-14 items-center justify-between">
+          <Link href="/" className="group flex items-center gap-1">
+            <span className="serif text-2xl font-bold text-stone-700">Find</span>
+            <span className="serif text-2xl font-bold text-[#0d6b11]">Accommodation</span>
           </Link>
 
-          {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-6">
-            {navLinks.map((link) => (
+          {/* Desktop Nav */}
+          <div className="hidden md:flex items-center gap-1">
+            {navItems.map((item) => (
               <Link
-                key={link.href}
-                href={link.href}
-                className={`text-sm font-medium transition-colors ${
-                  pathname === link.href
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "px-3 py-1.5 text-sm font-medium transition-colors duration-200 relative",
+                  isActiveLink(item.href)
                     ? 'text-[#16911c]'
-                    : 'text-stone-600 hover:text-stone-900'
-                }`}
+                    : 'text-stone-500 hover:text-[#0a1a12]'
+                )}
               >
-                {link.label}
+                {item.label}
+                {isActiveLink(item.href) && (
+                  <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-[#16911c]" />
+                )}
               </Link>
             ))}
+
+            {user && (
+              <>
+                <Link
+                  href="/dashboard"
+                  className={cn(
+                    "px-3 py-1.5 text-sm font-medium transition-colors duration-200 relative",
+                    isActiveLink('/dashboard')
+                      ? 'text-[#16911c]'
+                      : 'text-stone-500 hover:text-[#0a1a12]'
+                  )}
+                >
+                  Dashboard
+                  {isActiveLink('/dashboard') && (
+                    <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-[#16911c]" />
+                  )}
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="px-3 py-1.5 text-sm font-medium text-stone-400 hover:text-red-500 transition-colors duration-200"
+                >
+                  Logout
+                </button>
+              </>
+            )}
+
+            {!user && !loading && (
+              <div className="flex items-center gap-2 ml-3 pl-3 border-l border-stone-200">
+                <Link
+                  href="/auth/login"
+                  className="text-sm font-medium text-stone-500 hover:text-[#0a1a12] transition-colors px-3 py-1.5"
+                >
+                  Login
+                </Link>
+                <Link href="/auth/register">
+                  <button className="bg-[#16911c] hover:bg-[#0d6b11] text-white text-sm font-medium px-4 py-1.5 transition-colors">
+                    Sign Up
+                  </button>
+                </Link>
+              </div>
+            )}
           </div>
 
-          {/* Auth buttons */}
-          <div className="hidden md:flex items-center gap-3">
-            <Link
-              href={`/auth/login`}
-              className="text-sm font-medium text-stone-600 hover:text-stone-900 transition-colors"
+          {/* Mobile */}
+          <div className="md:hidden">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="p-1.5 text-stone-600 hover:text-stone-900 transition-colors"
             >
-              Log In
-            </Link>
-            <Link
-              href={`/auth/register`}
-              className="text-sm font-medium bg-[#16911c] text-white px-4 py-2 hover:bg-[#0d6b11] transition-colors"
-            >
-              Sign Up Free
-            </Link>
+              {isOpen ? (
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
+            </button>
           </div>
-
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 text-stone-600 hover:text-stone-900"
-          >
-            {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
         </div>
-      </div>
+      </nav>
 
       {/* Mobile menu */}
       {isOpen && (
         <div className="md:hidden border-t border-stone-200 bg-white">
-          <div className="px-4 py-4 space-y-3">
-            {navLinks.map((link) => (
+          <nav className="flex flex-col gap-0.5 px-4 py-4">
+            {navItems.map((item) => (
               <Link
-                key={link.href}
-                href={link.href}
+                key={item.href}
+                href={item.href}
                 onClick={() => setIsOpen(false)}
-                className={`block text-sm font-medium py-2 ${
-                  pathname === link.href
-                    ? 'text-[#16911c]'
-                    : 'text-stone-600'
-                }`}
+                className={cn(
+                  "px-4 py-3 text-sm font-medium transition-colors rounded-lg",
+                  isActiveLink(item.href)
+                    ? 'text-[#16911c] bg-[#16911c]/5'
+                    : 'text-stone-600 hover:text-[#0a1a12] hover:bg-stone-50'
+                )}
               >
-                {link.label}
+                {item.label}
               </Link>
             ))}
-            <div className="pt-3 border-t border-stone-200 space-y-2">
-              <Link
-                href={`/auth/login`}
-                onClick={() => setIsOpen(false)}
-                className="block text-sm font-medium text-stone-600 py-2"
-              >
-                Log In
-              </Link>
-              <Link
-                href={`/auth/register`}
-                onClick={() => setIsOpen(false)}
-                className="block text-sm font-medium bg-[#16911c] text-white px-4 py-2.5 text-center"
-              >
-                Sign Up Free
-              </Link>
-            </div>
-          </div>
+
+            {user && (
+              <>
+                <Link
+                  href="/dashboard"
+                  onClick={() => setIsOpen(false)}
+                  className={cn(
+                    "px-4 py-3 text-sm font-medium transition-colors rounded-lg",
+                    isActiveLink('/dashboard')
+                      ? 'text-[#16911c] bg-[#16911c]/5'
+                      : 'text-stone-600 hover:text-[#0a1a12] hover:bg-stone-50'
+                  )}
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={() => { handleLogout(); setIsOpen(false); }}
+                  className="px-4 py-3 text-sm font-medium text-stone-400 hover:text-red-500 hover:bg-red-50 transition-colors rounded-lg text-left"
+                >
+                  Logout
+                </button>
+              </>
+            )}
+
+            {!user && !loading && (
+              <div className="mt-4 pt-4 border-t border-stone-100 px-2 space-y-3">
+                <Link
+                  href="/auth/login"
+                  onClick={() => setIsOpen(false)}
+                  className="block w-full text-center px-4 py-3 text-sm font-medium text-stone-700 border border-stone-200 hover:bg-stone-50 transition-colors rounded-lg"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/auth/register"
+                  onClick={() => setIsOpen(false)}
+                  className="block w-full text-center px-4 py-3 text-sm font-medium text-white bg-[#16911c] hover:bg-[#0d6b11] transition-colors rounded-lg"
+                >
+                  Sign Up
+                </Link>
+              </div>
+            )}
+          </nav>
         </div>
       )}
-    </nav>
+    </header>
   );
-}
+};
+
+export default PlatformNavbar;
