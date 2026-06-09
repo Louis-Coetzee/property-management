@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { stripPlatformDomain } from './domainUtils';
 
 // Entity types for domain management
 export const ENTITY_TYPES = {
@@ -97,7 +98,7 @@ export const getDomainMapping = query({
 
       // If not found, try removing subdomain prefix
       if (!mapping) {
-        const subdomainPart = args.domain.replace('.refreshcrm.vercel.app', '').replace('.vercel.app', '');
+        const subdomainPart = stripPlatformDomain(args.domain);
         const subMapping = await ctx.db
           .query("domainMappings")
           .withIndex("by_domain_value", (q) =>

@@ -9,6 +9,7 @@ import toast from 'react-hot-toast';
 import { getVerificationError } from '@/utils/errorHandler';
 import { CheckCircle, AlertCircle, Mail } from 'lucide-react';
 import { AuthLayoutWrapper } from '@/components/auth';
+import { isPlatformDomain } from '@/lib/domain';
 
 const REFRESH_TECH_PRIMARY = '#10304f';
 const REFRESH_TECH_SECONDARY = '#308a29';
@@ -20,7 +21,7 @@ export default function VerifyEmailPage() {
   const token = searchParams.get('token');
   
   // Check if this is refresh tech domain
-  const isRefreshTech = domain === 'refreshcrm' || domain === 'refreshcrm.vercel.app' || domain === 'refresh-tech';
+  const isRefreshTech = isPlatformDomain(domain);
   
   // For other domains, fetch the website by domain
   const website = useQuery(

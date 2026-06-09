@@ -6,6 +6,7 @@ import { AuthLayout } from '@/components/auth/AuthLayout';
 import { AuthBrandingProvider } from '@/components/auth/AuthBrandingContext';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { isPlatformDomain } from '@/lib/domain';
 
 interface AuthLayoutWrapperProps {
   children: React.ReactNode;
@@ -57,7 +58,7 @@ export function AuthLayoutWrapper({
   const domain = params.domain as string;
   const [isReady, setIsReady] = useState(false);
   
-  const isRefreshTech = !domain || domain === 'refreshcrm' || domain === 'refreshcrm.vercel.app' || domain === 'refresh-tech' || domain?.includes('refreshcrm.vercel.app');
+  const isRefreshTech = !domain || isPlatformDomain(domain);
   
   const website = useQuery(
     api.websites.getWebsiteByDomainPublic,

@@ -4,6 +4,7 @@ import {
   validateUserCompanyAccess,
 } from "./security";
 import { api } from "./_generated/api";
+import { getPlatformDomain } from './domainUtils';
 
 // Helper function to validate access to a company resource
 async function validateCompanyResourceAccess(ctx: any, userId: string, companyId: string) {
@@ -365,7 +366,7 @@ export const createClientWithUserMutation = mutation({
 
     if (args.sendWelcomeEmail) {
       try {
-        const domain = (company as any).subdomain || (company as any).customDomain || 'refreshcrm.vercel.app';
+        const domain = (company as any).subdomain || (company as any).customDomain || getPlatformDomain();
         const primaryColor = company.branding?.primaryColor || '#308a29';
         
         const welcomeContent = `
@@ -399,7 +400,7 @@ export const createClientWithUserMutation = mutation({
 
     if (args.requireEmailVerification) {
       try {
-        const domain = (company as any).subdomain || (company as any).customDomain || 'refreshcrm.vercel.app';
+        const domain = (company as any).subdomain || (company as any).customDomain || getPlatformDomain();
         const primaryColor = company.branding?.primaryColor || '#308a29';
         const verificationUrl = `https://${domain}/auth/verify-email?token=${emailVerificationToken}`;
         

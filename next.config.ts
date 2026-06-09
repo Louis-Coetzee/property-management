@@ -26,6 +26,7 @@ const nextConfig: NextConfig = {
     VERCEL_PROJECT_ID: process.env.VERCEL_PROJECT_ID,
     VERCEL_TEAM_ID: process.env.VERCEL_TEAM_ID,
     NEXT_PUBLIC_SUBDOMAIN_BASE: process.env.NEXT_PUBLIC_SUBDOMAIN_BASE,
+    NEXT_PUBLIC_PLATFORM_DOMAIN: process.env.NEXT_PUBLIC_PLATFORM_DOMAIN,
   },
   async headers() {
     return [

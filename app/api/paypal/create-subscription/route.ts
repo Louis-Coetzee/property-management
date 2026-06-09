@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getPlatformDomain } from '@/lib/domain';
 
 interface PayPalProduct {
   id: string;
@@ -220,8 +221,8 @@ async function createOrUpdateProduct(
       description: `Monthly subscription for ${appName} - Full access to all features`,
       type: 'SERVICE',
       category: 'SOFTWARE',
-      image_url: 'https://refreshcrm.vercel.app/logo.png',
-      home_url: 'https://refreshcrm.vercel.app',
+      image_url: `https://${getPlatformDomain()}/logo.png`,
+      home_url: `https://${getPlatformDomain()}`,
     }),
   });
 
@@ -349,7 +350,7 @@ async function createSubscription(
   userFirstName?: string,
   userLastName?: string
 ): Promise<string> {
-  const origin = request.headers.get('origin') || 'https://refreshcrm.vercel.app';
+  const origin = request.headers.get('origin') || `https://${getPlatformDomain()}`;
 
   // Use provided user info or defaults
   const subscriberEmail = userEmail || `user_${userId}@refreshcrm.app`;

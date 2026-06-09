@@ -5,6 +5,7 @@ import { AuthProvider } from './AuthProvider';
 import { DomainLayoutWrapper } from './DomainLayoutWrapper';
 import { fetchQuery } from 'convex/nextjs';
 import { api } from '@/convex/_generated/api';
+import { isPlatformDomain } from '@/lib/domain';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -16,7 +17,7 @@ export default async function DomainLayout({
 }) {
   const { domain } = await params;
 
-  const isDefaultDomain = domain === 'refreshcrm.vercel.app';
+  const isDefaultDomain = isPlatformDomain(domain);
 
   // Get website data for favicon and SEO
   let faviconUrl: string | null = null;
@@ -78,7 +79,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { domain } = await params;
 
-  const isDefaultDomain = domain === 'refreshcrm.vercel.app';
+  const isDefaultDomain = isPlatformDomain(domain);
 
   let websiteName = domain;
   let websiteDescription = `Website for ${domain}`;

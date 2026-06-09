@@ -1,6 +1,7 @@
 import { ButtonHTMLAttributes, forwardRef } from 'react';
 import { useParams } from 'next/navigation';
 import { useAuthBranding } from '@/components/auth/AuthBrandingContext';
+import { isPlatformDomain } from '@/lib/domain';
 
 const REFRESH_TECH_PRIMARY = '#10304f';
 const REFRESH_TECH_SECONDARY = '#308a29';
@@ -23,7 +24,7 @@ export const AuthButton = forwardRef<HTMLButtonElement, AuthButtonProps>(
   ({ children, variant = 'primary', isLoading = false, primaryColor, className = '', disabled, ...props }, ref) => {
     const params = useParams();
     const domain = params.domain as string;
-    const isRefreshTechDomain = !domain || domain === 'refreshcrm' || domain === 'refreshcrm.vercel.app' || domain === 'refresh-tech' || domain?.includes('refreshcrm.vercel.app');
+    const isRefreshTechDomain = !domain || isPlatformDomain(domain);
     
     const baseStyles = 'w-full py-3.5 px-6 rounded-xl font-semibold text-sm transition-all duration-200 ease-out relative overflow-hidden';
     

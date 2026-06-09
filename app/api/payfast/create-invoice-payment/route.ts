@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     const merchantId = process.env.PAYFAST_MERCHANT_ID || (isTest ? '10000100' : '');
     const merchantKey = process.env.PAYFAST_MERCHANT_KEY || (isTest ? '46f0cd694581a' : '');
 
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const baseUrl = request.headers.get('origin') || `https://${process.env.NEXT_PUBLIC_PLATFORM_DOMAIN}` || 'http://localhost:3000';
     const returnUrl = `${baseUrl}/public/invoices/payment-success?invoiceId=${invoiceId}&method=payfast`;
     const cancelUrl = `${baseUrl}/public/invoices/payment-cancel?invoiceId=${invoiceId}`;
     const notifyUrl = `${baseUrl}/api/payfast/invoice-notify`;

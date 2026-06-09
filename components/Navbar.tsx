@@ -14,6 +14,7 @@ import {
 import { Menu, X, LayoutDashboard, User, LogOut, Shield, Package, Calendar, Heart } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import { isPlatformDomain } from '@/lib/domain';
 
 interface NavbarProps {
   domain?: string;
@@ -30,7 +31,7 @@ export function Navbar({ domain }: NavbarProps) {
   const currentDomain = domain || (params.domain as string);
 
   // Check if this is refresh tech domain
-  const isRefreshTech = currentDomain === 'refreshcrm' || currentDomain === 'refreshcrm.vercel.app' || currentDomain === 'refresh-tech';
+  const isRefreshTech = isPlatformDomain(currentDomain);
 
   // Fetch website for branding (only for non-refresh tech domains)
   const website = useQuery(

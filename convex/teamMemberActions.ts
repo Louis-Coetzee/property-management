@@ -1,6 +1,7 @@
 import { action } from "./_generated/server";
 import { v } from "convex/values";
 import { api } from "./_generated/api";
+import { getPlatformDomain } from './domainUtils';
 
 function generateSecureToken(): string {
   return Math.random().toString(36).substring(2) + Date.now().toString(36);
@@ -96,7 +97,7 @@ export const inviteMemberAction = action({
       try {
         const company: any = await ctx.runQuery(api.companies.getById, { companyId: args.companyId });
         if (company) {
-          const domain = company.subdomain || company.customDomain || 'refreshcrm.vercel.app';
+          const domain = company.subdomain || company.customDomain || getPlatformDomain();
           const primaryColor = company.branding?.primaryColor || '#308a29';
 
           const welcomeContent = `
@@ -128,7 +129,7 @@ export const inviteMemberAction = action({
       try {
         const company: any = await ctx.runQuery(api.companies.getById, { companyId: args.companyId });
         if (company) {
-          const domain = company.subdomain || company.customDomain || 'refreshcrm.vercel.app';
+          const domain = company.subdomain || company.customDomain || getPlatformDomain();
           const primaryColor = company.branding?.primaryColor || '#308a29';
           const verificationToken = result.emailVerificationToken;
           const verificationUrl = `https://${domain}/auth/verify-email?token=${verificationToken}`;

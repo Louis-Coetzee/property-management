@@ -13,6 +13,7 @@ import { useAuthGuard } from '../AuthProvider';
 import Link from 'next/link';
 import { Building2, Plus, Edit2, Trash2, X, Check, ArrowRight, Grid3X3, Settings, User, Package, Calendar, Heart } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { isPlatformDomain } from '@/lib/domain';
 
 export default function DashboardPage() {
   const { isAuthenticated, isLoading, user } = useAuthGuard();
@@ -20,7 +21,7 @@ export default function DashboardPage() {
   const domain = params.domain as string;
   
   // Check if this is refresh tech domain
-  const isRefreshTech = domain === 'refreshcrm' || domain === 'refreshcrm.vercel.app' || domain === 'refresh-tech';
+  const isRefreshTech = isPlatformDomain(domain);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);

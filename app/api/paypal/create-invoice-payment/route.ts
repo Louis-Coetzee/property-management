@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'PayPal not configured' }, { status: 400 });
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const baseUrl = request.headers.get('origin') || `https://${process.env.NEXT_PUBLIC_PLATFORM_DOMAIN}` || 'http://localhost:3000';
     const returnUrl = `${baseUrl}/public/invoices/payment-success?invoiceId=${invoiceId}&method=paypal`;
     const cancelUrl = `${baseUrl}/public/invoices/payment-cancel?invoiceId=${invoiceId}`;
 

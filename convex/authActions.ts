@@ -2,6 +2,7 @@ import { action } from "./_generated/server";
 import { v } from "convex/values";
 import { api } from "./_generated/api";
 import { Doc, Id } from "./_generated/dataModel";
+import { isNotPlatformDomain } from './domainUtils';
 
 // Generate secure random token
 function generateSecureToken(): string {
@@ -61,7 +62,7 @@ export const registerUserAction = action({
       }
 
       // Auto-create client record if registering from a company domain
-      if (args.domain && args.domain !== 'refreshcrm.vercel.app' && !args.domain.endsWith('.refreshcrm.vercel.app')) {
+      if (args.domain && isNotPlatformDomain(args.domain)) {
         try {
           // Look up domain mapping to find the company
           const domainMapping = await ctx.runQuery(api.domainManagement.getDomainMapping, {
