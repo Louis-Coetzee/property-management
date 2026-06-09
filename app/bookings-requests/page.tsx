@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { useAuth } from '@/app/[domain]/AuthProvider';
+import { useRootAuth } from '@/components/platform/RootAuthProvider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -27,7 +27,7 @@ import {
 import toast from 'react-hot-toast';
 
 export default function BookingsRequestsPage() {
-  const { user } = useAuth();
+  const { user } = useRootAuth();
   const router = useRouter();
   const [statusFilter, setStatusFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');

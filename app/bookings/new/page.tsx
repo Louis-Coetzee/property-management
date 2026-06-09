@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { useAuth } from '@/app/[domain]/AuthProvider';
+import { useRootAuth } from '@/components/platform/RootAuthProvider';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,7 +16,7 @@ import toast from 'react-hot-toast';
 import { format, addDays, differenceInDays } from 'date-fns';
 
 export default function NewBookingPage() {
-  const { user } = useAuth();
+  const { user } = useRootAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const listingId = searchParams.get('listingId');

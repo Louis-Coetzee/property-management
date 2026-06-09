@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
-import { useAuth } from '@/app/[domain]/AuthProvider';
+import { useRootAuth } from '@/components/platform/RootAuthProvider';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -41,7 +41,7 @@ function formatDateToLocalYYYYMMDD(date: Date): string {
 }
 
 export default function AvailabilityManagementPage() {
-  const { user } = useAuth();
+  const { user } = useRootAuth();
   const params = useParams();
   const router = useRouter();
   const listingId = params.id as Id<'listings'>;

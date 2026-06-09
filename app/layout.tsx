@@ -4,6 +4,7 @@ import { GlobalErrorHandler } from '@/components/GlobalErrorHandler';
 import { CartProvider } from '@/context/CartContext';
 import { CurrencyProvider } from '@/context/CurrencyContext';
 import { RootConvexProvider } from '@/components/platform/RootConvexProvider';
+import { RootAuthProvider } from '@/components/platform/RootAuthProvider';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -21,11 +22,13 @@ export default function RootLayout({
       <body className={inter.className}>
         <GlobalErrorHandler />
         <RootConvexProvider>
-          <CurrencyProvider>
-            <CartProvider>
-              {children}
-            </CartProvider>
-          </CurrencyProvider>
+          <RootAuthProvider>
+            <CurrencyProvider>
+              <CartProvider>
+                {children}
+              </CartProvider>
+            </CurrencyProvider>
+          </RootAuthProvider>
         </RootConvexProvider>
       </body>
     </html>
