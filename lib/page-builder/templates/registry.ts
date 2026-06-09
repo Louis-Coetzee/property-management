@@ -17,6 +17,7 @@ import {
   Wrench,
   Package,
   Calendar,
+  Home,
 } from 'lucide-react';
 
 // ============================================================================

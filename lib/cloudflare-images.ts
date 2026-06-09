@@ -268,9 +268,14 @@ const CLOUDFLARE_ACCOUNT_HASH = process.env.NEXT_PUBLIC_CLOUDFLARE_ACCOUNT_HASH 
 
 export function getCloudflareImageUrl(imageIdOrUrl: string | null | undefined, variant: string = 'public'): string | null {
   if (!imageIdOrUrl) return null;
+  // If it's already a full URL, use it directly
   if (imageIdOrUrl.startsWith('http')) {
     if (imageIdOrUrl.includes('imagedelivery.net')) return imageIdOrUrl;
     return imageIdOrUrl;
+  }
+  // If it looks like a Convex document ID (contains hyphens and is long), skip it
+  if (imageIdOrUrl.length > 20 && !imageIdOrUrl.includes('/')) {
+    return '/placeholder-image.svg';
   }
   return `https://imagedelivery.net/${CLOUDFLARE_ACCOUNT_HASH}/${imageIdOrUrl}/${variant}`;
 }

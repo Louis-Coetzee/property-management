@@ -157,7 +157,7 @@ export function MultiMediaPicker({
           <MediaLibraryModal
             userId={user.id as Id<"users">}
             onSelectImage={(url) => handleSelectFromLibrary([url])}
-            onSelectMultipleImages={handleSelectFromLibrary}
+            onSelectMultipleImages={(_mediaIds, urls) => handleSelectFromLibrary(urls.filter(u => u && u.startsWith('http')))}
             selectedImages={value}
             allowMultiSelect={true}
           >

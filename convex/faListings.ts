@@ -18,6 +18,25 @@ export const getListingsByCompany = query({
   },
 });
 
+// Get active listings by company (for website builder showcase)
+export const getActiveListingsByCompany = query({
+  args: {
+    companyId: v.string(),
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const limit = args.limit || 12;
+    const listings = await ctx.db
+      .query("listings")
+      .withIndex("by_company", (q) => q.eq("companyId", args.companyId))
+      .order("desc")
+      .collect();
+
+    const activeListings = listings.filter(l => l.status === "active");
+    return activeListings.slice(0, limit);
+  },
+});
+
 // Create a new listing (company-scoped)
 export const createListing = mutation({
   args: {

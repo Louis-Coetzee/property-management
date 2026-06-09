@@ -48,6 +48,7 @@ export type SectionType =
   | 'listings-showcase'
   | 'product-showcase'
   | 'service-showcase'
+  | 'property-showcase'
   | 'logo-ticker'
   | 'ai-generated'
   | 'custom-code'

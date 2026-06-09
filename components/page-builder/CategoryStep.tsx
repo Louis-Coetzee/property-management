@@ -18,6 +18,7 @@ import {
   Wand2,
   Code,
   Calendar,
+  Home,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { SectionType } from '@/types/page-builder';
@@ -117,6 +118,14 @@ const SECTION_CATEGORIES: CategoryOption[] = [
     name: 'Listings Showcase',
     description: 'Display vehicle listings with filters',
     icon: Car,
+    isAvailable: true,
+    templateCount: 2,
+  },
+  {
+    type: 'property-showcase',
+    name: 'Property Showcase',
+    description: 'Display property listings for your company',
+    icon: Home,
     isAvailable: true,
     templateCount: 2,
   },
