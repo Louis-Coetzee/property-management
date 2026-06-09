@@ -216,7 +216,7 @@ export default function UserListingCard({
                   <AlertDialogTrigger asChild>
                     <DropdownMenuItem 
                       className="text-red-600 hover:text-red-700 cursor-pointer"
-                      onSelect={(e) => e.preventDefault()}
+                      onSelect={(e: Event) => e.preventDefault()}
                     >
                       <Trash2 className="h-4 w-4 mr-2" />
                       Delete Listing

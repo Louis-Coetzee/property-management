@@ -833,7 +833,7 @@ export const sendStatusChangeEmails = action({
     ),
     updatedBy: v.id("users"),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<{ success: boolean; error?: string }> => {
     const inquiry = await ctx.runQuery(api.accommodationInquiries.getInquiry, {
       inquiryId: args.inquiryId,
     });

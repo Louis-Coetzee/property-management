@@ -185,7 +185,7 @@ export default function EditListingForm({ listingId, className = '' }: EditListi
   const [customAmenity, setCustomAmenity] = useState('');
 
   // Get steps based on user role
-  const STEPS = getSteps(user?.role === 'admin');
+  const STEPS = getSteps((user as any)?.role === 'admin');
 
   const form = useForm<FormValues>({
     resolver: zodResolver(listingFormSchema),
@@ -550,7 +550,7 @@ export default function EditListingForm({ listingId, className = '' }: EditListi
         status: data.isActive ? 'active' : 'inactive',
       };
 
-      await updateListing(listingData);
+      await updateListing(listingData as any);
 
       toast({
         title: 'Success!',
@@ -967,9 +967,9 @@ export default function EditListingForm({ listingId, className = '' }: EditListi
               </div>
 
               {/* Featured and Active Toggles */}
-              <div className={`grid gap-6 mt-6 ${user?.role === 'admin' ? 'md:grid-cols-2' : 'md:grid-cols-1'}`}>
+              <div className={`grid gap-6 mt-6 ${(user as any)?.role === 'admin' ? 'md:grid-cols-2' : 'md:grid-cols-1'}`}>
                 {/* Featured Listing - Admin Only */}
-                {user?.role === 'admin' && (
+                {(user as any)?.role === 'admin' && (
                   <FormField
                     control={form.control}
                     name="isFeatured"
@@ -1286,7 +1286,7 @@ export default function EditListingForm({ listingId, className = '' }: EditListi
                 </div>
                 <Switch
                   checked={paymentDetailsEnabled}
-                  onCheckedChange={(checked) => handleNestedFieldUpdate('paymentDetails', 'enabled', checked)}
+                  onCheckedChange={(checked: boolean | 'indeterminate') => handleNestedFieldUpdate('paymentDetails', 'enabled', checked)}
                 />
               </div>
 

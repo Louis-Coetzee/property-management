@@ -178,7 +178,7 @@ export default function ListingFilters({
         <Label htmlFor="propertyType" className="text-sm font-medium">Property Type</Label>
         <Select
           value={filters.propertyType}
-          onValueChange={(value) => handleInputChange('propertyType', value)}
+          onValueChange={(value: string) => handleInputChange('propertyType', value)}
         >
           <SelectTrigger id="propertyType">
             <SelectValue placeholder="All property types" />
@@ -255,7 +255,7 @@ export default function ListingFilters({
         <Label htmlFor="sortBy" className="text-sm font-medium">Sort By</Label>
         <Select
           value={filters.sortBy}
-          onValueChange={(value) => handleInputChange('sortBy', value)}
+          onValueChange={(value: string) => handleInputChange('sortBy', value)}
         >
           <SelectTrigger id="sortBy">
             <SelectValue placeholder="Sort by..." />

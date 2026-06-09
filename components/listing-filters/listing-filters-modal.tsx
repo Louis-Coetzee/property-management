@@ -109,7 +109,7 @@ export function ListingFiltersModal({ children, onApply, initialFilters }: Listi
               max={10000}
               step={100}
               value={[minPrice, maxPrice]}
-              onValueChange={([min, max]) => {
+              onValueChange={([min, max]: number[]) => {
                 setMinPrice(min);
                 setMaxPrice(max);
               }}
@@ -130,7 +130,7 @@ export function ListingFiltersModal({ children, onApply, initialFilters }: Listi
               </Label>
               <Select
                 value={bedrooms.toString()}
-                onValueChange={(value) => setBedrooms(parseInt(value))}
+                onValueChange={(value: string) => setBedrooms(parseInt(value))}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Any" />
@@ -154,7 +154,7 @@ export function ListingFiltersModal({ children, onApply, initialFilters }: Listi
               </Label>
               <Select
                 value={bathrooms.toString()}
-                onValueChange={(value) => setBathrooms(parseInt(value))}
+                onValueChange={(value: string) => setBathrooms(parseInt(value))}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Any" />
@@ -180,7 +180,7 @@ export function ListingFiltersModal({ children, onApply, initialFilters }: Listi
                   <Checkbox
                     id={amenity}
                     checked={selectedAmenities.includes(amenity)}
-                    onCheckedChange={(checked) => {
+                    onCheckedChange={(checked: boolean | 'indeterminate') => {
                       if (checked) {
                         setSelectedAmenities([...selectedAmenities, amenity]);
                       } else {

@@ -12,7 +12,7 @@ export const checkNewListingAgainstAlerts = action({
   args: {
     newListingId: v.id("listings"),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<{ processed: number; emailsSent?: number; listingTitle?: string; error?: string }> => {
     try {
       const listing = await ctx.runQuery(api.listings.getListingById, {
         id: args.newListingId,
@@ -77,11 +77,12 @@ function checkListingMatchesAlert(listing: any, alert: any): boolean {
     const alertParts = alert.location.toLowerCase().split(',').map((part: string) => part.trim()).filter((part: string) => part.length > 0);
     
     const allPartsMatch = alertParts.every((part: string) => {
-      return 
+      return (
         (listing.location.suburb?.toLowerCase().includes(part)) ||
         (listing.location.city?.toLowerCase().includes(part)) ||
         (listing.location.province?.toLowerCase().includes(part)) ||
-        (listing.location.country?.toLowerCase().includes(part));
+        (listing.location.country?.toLowerCase().includes(part))
+      );
     });
     
     if (!allPartsMatch) {
@@ -354,7 +355,7 @@ export const sendAlertNotifications = action({
     alertId: v.id("alerts"),
     newListingId: v.id("listings"),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<{ success: boolean; emailSent?: boolean; error?: string }> => {
     try {
       const alert = await ctx.runQuery(api.alerts.getAlert, {
         alertId: args.alertId,
@@ -364,8 +365,10 @@ export const sendAlertNotifications = action({
         throw new Error("Alert not found");
       }
 
-      // Get user directly from DB instead of api.users.getUser
-      const user = await ctx.db.get(alert.userId);
+      // Get user via query (actions can't use ctx.db directly)
+      const user = await ctx.runQuery(api.admin.getUserByIdAdmin, {
+        userId: alert.userId,
+      });
 
       if (!user) {
         throw new Error("User not found");
@@ -474,7 +477,7 @@ export const manualTriggerAlertsForListing = action({
   args: {
     listingId: v.id("listings"),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<{ processed: number; emailsSent?: number; listingTitle?: string; error?: string }> => {
     const result = await ctx.runAction(api.alerts.checkNewListingAgainstAlerts, {
       newListingId: args.listingId,
     });

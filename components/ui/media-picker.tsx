@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { ImagePlus, X } from 'lucide-react';
 import MediaLibraryModal from '@/components/media-library-modal';
 import { Id } from '@/convex/_generated/dataModel';
-import { useAuth } from '@/app/context/AuthContext';
+import { useAuth } from '@/app/[domain]/AuthProvider';
 
 export interface MediaPickerProps {
   id?: string;

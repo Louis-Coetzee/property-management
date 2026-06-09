@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { ImagePlus, X, Trash2, GripVertical, Star, Crown, Image as ImageIcon } from 'lucide-react';
 import MediaLibraryModal from '@/components/media-library-modal';
 import { Id } from '@/convex/_generated/dataModel';
-import { useAuth } from '@/app/context/AuthContext';
+import { useAuth } from '@/app/[domain]/AuthProvider';
 import { cn } from '@/lib/utils';
 import { getOptimizedImageProps } from '@/lib/cloudflare-images';
 

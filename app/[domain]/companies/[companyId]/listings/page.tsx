@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useParams } from 'next/navigation';
-import { useAuthGuard } from '../../../../AuthProvider';
+import { useAuthGuard } from '@/app/[domain]/AuthProvider';
 import Link from 'next/link';
 import {
   Home,
@@ -106,6 +106,7 @@ export default function CompanyListingsPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedListing, setSelectedListing] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSideSheetOpen, setIsSideSheetOpen] = useState(false);

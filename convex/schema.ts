@@ -2089,4 +2089,12 @@ export default defineSchema({
       searchField: "searchText",
       filterFields: ["isActive", "province", "country", "city", "district"],
     }),
+
+  siteSettings: defineTable({
+    key: v.string(),
+    settings: v.any(),
+    updatedAt: v.string(),
+    updatedBy: v.optional(v.id("users")),
+  })
+    .index("by_key", ["key"]),
 });

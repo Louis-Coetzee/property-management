@@ -851,9 +851,9 @@ export default function AddListingForm({ className = '' }: AddListingFormProps) 
               </div>
 
               {/* Featured and Active Toggles */}
-              <div className={`grid gap-6 mt-6 ${user?.role === 'admin' ? 'md:grid-cols-2' : 'md:grid-cols-1'}`}>
+              <div className={`grid gap-6 mt-6 ${(user as any)?.role === 'admin' ? 'md:grid-cols-2' : 'md:grid-cols-1'}`}>
                 {/* Featured Listing - Admin Only */}
-                {user?.role === 'admin' && (
+                {(user as any)?.role === 'admin' && (
                   <FormField
                     control={form.control}
                     name="isFeatured"
@@ -1085,7 +1085,7 @@ export default function AddListingForm({ className = '' }: AddListingFormProps) 
                 </div>
                 <Switch
                   checked={paymentDetailsEnabled}
-                  onCheckedChange={(checked) => handleNestedFieldUpdate('paymentDetails', 'enabled', checked)}
+                  onCheckedChange={(checked: boolean | 'indeterminate') => handleNestedFieldUpdate('paymentDetails', 'enabled', checked)}
                 />
               </div>
 

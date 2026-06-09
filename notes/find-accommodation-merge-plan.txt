@@ -53,32 +53,52 @@ COMPLETED:
 
 ================================================================================
  STAGE 2: ESSENTIAL [DOMAIN] COMPONENTS
- Status: 🔄 IN PROGRESS
+ Status: ✅ COMPLETE
 ================================================================================
 
-Copy to components/find-accommodation/ subfolder.
-These are needed for [domain] routes (company dashboards, bookings, etc.)
+All copied to components/ and components/ui/:
 
-PRIORITY 1 — Listing display:
-  - listing-card.tsx (main listing card for browse/search)
-  - user-listing-card.tsx (user's own listing card)
-  - listing-filters/ (filter components for search)
+UI COMPONENTS (23 files copied from FA):
+  ✅ card.tsx, input.tsx, label.tsx, select.tsx, badge.tsx, slider.tsx
+  ✅ checkbox.tsx, form.tsx, textarea.tsx, switch.tsx, separator.tsx
+  ✅ popover.tsx, radio-group.tsx, alert-dialog.tsx, dropdown-menu.tsx
+  ✅ login-modal.tsx, multi-media-picker.tsx, media-picker.tsx
+  ✅ Installed @radix-ui/* packages (14 packages)
+  ✅ Removed FA shadcn toast system — using PM's use-toast.tsx (react-hot-toast)
+  ✅ Added DialogDescription to dialog.tsx
+  ✅ Added getOptimizedImageProps to lib/cloudflare-images.ts
 
-PRIORITY 2 — Forms:
-  - add-listing-form.tsx (create new listing — company dashboard)
-  - edit-listing-form.tsx (edit listing — company dashboard)
+LISTING COMPONENTS (5 files):
+  ✅ listing-card.tsx (main listing card)
+  ✅ listing-filters/ (4 files: index.ts, index.tsx, listing-filters.tsx, listing-filters-modal.tsx)
+  ✅ add-listing-form.tsx (auth import fixed to PM's AuthProvider)
+  ✅ edit-listing-form.tsx (auth import fixed to PM's AuthProvider)
+  ✅ user-listing-card.tsx
+  ✅ payment-gateway-selector.tsx (needs api.sites — deferred to Stage 4)
 
-PRIORITY 3 — Booking:
-  - payment-gateway-selector.tsx (PayFast/Paygate selection)
+FIXES APPLIED:
+  ✅ Auth imports: @/app/context/AuthContext → @/app/[domain]/AuthProvider
+  ✅ user.role casts: (user as any)?.role (PM User type has no role field)
+  ✅ Implicit any types fixed in filters, forms, toast
+  ✅ convex/alerts.ts: ctx.db.get → ctx.runQuery (action context)
+  ✅ companies/listings page: added missing showDeleteModal state
 
-PRIORITY 4 — Media (if different from PM's):
-  - media-library.tsx
-  - media-library-modal.tsx
+PENDING (Convex deploy required):
+  ⏳ api.faListings, api.listings, api.alerts, api.accommodationInquiries,
+     api.contact, api.sites — all need npx convex deploy to generate types
 
-NOT NEEDED (PM has equivalents):
-  - navbar.tsx / footer.tsx → using PlatformNavbar/PlatformFooter
-  - auth components → PM's auth system
-  - providers → PM's providers
+================================================================================
+ CONVEX DEPLOY
+ Status: ✅ COMPLETE
+================================================================================
+
+  ✅ npx convex deploy --yes — all functions deployed to dashing-gull-105
+  ✅ Schema tables pushed: listings, alerts, accommodationInquiries, etc.
+  ✅ TypeScript bindings generated
+  ✅ Circular type references fixed (explicit return types on actions)
+  ✅ esbuild warning fixed (bare return → parenthesized return)
+  ✅ payment-gateway-selector adapted (api.sites → DEFAULT_GATEWAYS)
+  ✅ TypeScript typecheck: 0 errors
 
 ================================================================================
  STAGE 3: [DOMAIN] PAGE ROUTES

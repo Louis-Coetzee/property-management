@@ -142,7 +142,7 @@ export default function ListingsPage() {
           <>
             <p className="text-sm text-stone-500 mb-6">{listings.total} listing{listings.total !== 1 ? 's' : ''} found</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-              {listings.listings.map((listing) => (
+              {listings.listings.map((listing: any) => (
                 <Link key={listing._id} href={`/listings/${listing._id}`}>
                   <div className="bg-white rounded-xl border border-stone-200 hover:border-[#16911c]/30 hover:shadow-lg hover:shadow-[#16911c]/5 transition-all duration-200 overflow-hidden cursor-pointer group">
                     <div className="h-48 bg-gradient-to-br from-stone-100 to-stone-50 flex items-center justify-center relative overflow-hidden">

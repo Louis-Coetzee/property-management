@@ -1,13 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Button } from './ui/button';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { Label } from './ui/label';
 import { CreditCard, CheckCircle2, Info } from 'lucide-react';
-import { useQuery } from 'convex/react';
-import { api } from '@/convex/_generated/api';
 
 interface PaymentGateway {
   name: string;
@@ -24,68 +21,43 @@ interface PaymentGatewaySelectorProps {
   disabled?: boolean;
 }
 
+const DEFAULT_GATEWAYS: PaymentGateway[] = [
+  {
+    name: 'PayFast',
+    value: 'payfast',
+    description: 'South Africa\'s trusted online payment gateway',
+    features: [
+      'Instant EFT',
+      'Credit & Debit Cards',
+      'Masterpass',
+      'Zapper',
+      'Secure transactions',
+    ],
+    icon: <CreditCard className="h-6 w-6 text-green-600" />,
+    enabled: true,
+  },
+  {
+    name: 'Paygate',
+    value: 'paygate',
+    description: 'Secure payment processing by Nedbank',
+    features: [
+      'Credit & Debit Cards',
+      '3D Secure',
+      'EFT payments',
+      'Recurring billing',
+      'Fraud protection',
+    ],
+    icon: <CreditCard className="h-6 w-6 text-blue-600" />,
+    enabled: true,
+  },
+];
+
 export function PaymentGatewaySelector({
   selectedGateway,
   onGatewaySelect,
   disabled = false
 }: PaymentGatewaySelectorProps) {
-  const sites = useQuery(api.sites.getAllSites);
-  const [gateways, setGateways] = useState<PaymentGateway[]>([]);
-
-  useEffect(() => {
-    if (sites && sites.length > 0) {
-      const site = sites[0];
-      const paymentSettings = site.settings?.payment;
-
-      if (paymentSettings) {
-        const availableGateways: PaymentGateway[] = [];
-
-        // Add PayFast if enabled
-        if (paymentSettings.payfast?.enabled) {
-          availableGateways.push({
-            name: 'PayFast',
-            value: 'payfast',
-            description: 'South Africa\'s trusted online payment gateway',
-            features: [
-              'Instant EFT',
-              'Credit & Debit Cards',
-              'Masterpass',
-              'Zapper',
-              'Secure transactions'
-            ],
-            icon: <CreditCard className="h-6 w-6 text-green-600" />,
-            enabled: true
-          });
-        }
-
-        // Add Paygate if enabled
-        if (paymentSettings.paygate?.enabled) {
-          availableGateways.push({
-            name: 'Paygate',
-            value: 'paygate',
-            description: 'Secure payment processing by Nedbank',
-            features: [
-              'Credit & Debit Cards',
-              '3D Secure',
-              'Multi-currency support',
-              'Real-time processing',
-              'Bank-level security'
-            ],
-            icon: <CreditCard className="h-6 w-6 text-blue-600" />,
-            enabled: true
-          });
-        }
-
-        setGateways(availableGateways);
-
-        // Auto-select default gateway if none selected
-        if (!selectedGateway && availableGateways.length > 0) {
-          const defaultGateway = paymentSettings.defaultGateway || availableGateways[0].value;
-          onGatewaySelect(defaultGateway);
-        }
-      }
-    }
-  }, [sites, selectedGateway, onGatewaySelect]);
+  const gateways = DEFAULT_GATEWAYS;
 
   if (gateways.length === 0) {
     return (
@@ -154,7 +126,7 @@ export function PaymentGatewaySelector({
       <CardContent className="space-y-4">
         <RadioGroup
           value={selectedGateway || ''}
-          onValueChange={(value) => onGatewaySelect(value as 'payfast' | 'paygate')}
+          onValueChange={(value: string) => onGatewaySelect(value as 'payfast' | 'paygate')}
           disabled={disabled}
         >
           {gateways.map((gateway) => (

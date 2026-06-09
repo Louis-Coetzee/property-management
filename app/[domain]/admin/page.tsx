@@ -13,6 +13,7 @@ import {
   ChevronRight,
   Grid3X3,
   Plug,
+  Settings,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
@@ -54,7 +55,18 @@ const adminCards = [
     color: 'from-orange-500 to-orange-600',
     bgColor: 'bg-orange-50',
     textColor: 'text-orange-600',
-    borderColor: 'border-orange-200'},
+    borderColor: 'border-orange-200',
+  },
+  {
+    title: 'Site Settings',
+    description: 'Manage Find Accommodation site mode, payments, and notifications',
+    icon: Settings,
+    href: '/admin/site-settings',
+    color: 'from-slate-500 to-slate-600',
+    bgColor: 'bg-slate-50',
+    textColor: 'text-slate-600',
+    borderColor: 'border-slate-200',
+  },
 ];
 
 export default function AdminPage() {
