@@ -8,6 +8,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const {
       userId,
+      companyId,
       title,
       description,
       propertyType,
@@ -21,7 +22,7 @@ export async function POST(request: NextRequest) {
       isActive = false
     } = body;
 
-    if (!userId || !title || !description || !propertyType || !location || !pricePerNight) {
+    if (!userId || !companyId || !title || !description || !propertyType || !location || !pricePerNight) {
       return NextResponse.json(
         { success: false, message: 'Missing required fields' },
         { status: 400 }
@@ -83,6 +84,7 @@ export async function POST(request: NextRequest) {
       checkInTime: '15:00',
       checkOutTime: '11:00',
       cancellationPolicy: 'Moderate',
+      companyId: companyId,
       isFeatured: false,
       ownerId: userId as Id<"users">,
     };
