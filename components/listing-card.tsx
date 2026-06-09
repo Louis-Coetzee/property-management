@@ -92,7 +92,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
   const images =
     listing.images && listing.images.length > 0
       ? listing.images
-      : [listing.featuredImage || '/placeholder-property.jpg'];
+      : [listing.featuredImage || '/placeholder-image.svg'];
 
   const formatPrice = (price: number, currency: string) => {
     if (currency === 'ZAR') return `R${price.toLocaleString()}`;

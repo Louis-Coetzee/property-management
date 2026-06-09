@@ -22,8 +22,10 @@ import {
   Eye,
   Star,
   X,
+  Images,
 } from 'lucide-react';
 import { NavigationSideSheet, NavigationMenuButton } from '@/components/navigation/NavigationSideSheet';
+import { MultiMediaPicker } from '@/components/ui/multi-media-picker';
 
 const propertyTypes = [
   'House', 'Apartment', 'Guest Suite', 'Villa', 'Townhouse',
@@ -55,6 +57,9 @@ interface ListingFormData {
   cleaningFee: string;
   securityDeposit: string;
   amenities: string;
+  images: string[];
+  featuredImage: string | null;
+  coverImageIndex: number;
   availableFrom: string;
   availableTo: string;
   minimumStay: number;
@@ -85,6 +90,9 @@ const defaultFormData: ListingFormData = {
   cleaningFee: '',
   securityDeposit: '',
   amenities: '',
+  images: [],
+  featuredImage: null,
+  coverImageIndex: 0,
   availableFrom: new Date().toISOString().split('T')[0],
   availableTo: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
   minimumStay: 1,
@@ -139,6 +147,24 @@ export default function CompanyListingsPage() {
     setSelectedListing(null);
   };
 
+  const handleImagesChange = (images: string[]) => {
+    setFormData(prev => ({
+      ...prev,
+      images,
+      featuredImage: images.length > 0
+        ? images[prev.coverImageIndex] || images[0]
+        : null,
+    }));
+  };
+
+  const handleCoverImageChange = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      coverImageIndex: index,
+      featuredImage: prev.images[index] || null,
+    }));
+  };
+
   const handleOpenAdd = () => {
     resetForm();
     setShowAddModal(true);
@@ -164,6 +190,9 @@ export default function CompanyListingsPage() {
       cleaningFee: listing.cleaningFee?.toString() || '',
       securityDeposit: listing.securityDeposit?.toString() || '',
       amenities: (listing.amenities || []).join(', '),
+      images: listing.images || [],
+      featuredImage: listing.featuredImage || null,
+      coverImageIndex: 0,
       availableFrom: listing.availableFrom || new Date().toISOString().split('T')[0],
       availableTo: listing.availableTo || new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       minimumStay: listing.minimumStay || 1,
@@ -207,8 +236,8 @@ export default function CompanyListingsPage() {
         cleaningFee: formData.cleaningFee ? parseFloat(formData.cleaningFee) : null,
         securityDeposit: formData.securityDeposit ? parseFloat(formData.securityDeposit) : null,
         amenities: amenitiesArray,
-        images: [],
-        featuredImage: null,
+        images: formData.images,
+        featuredImage: formData.featuredImage,
         availableFrom: formData.availableFrom,
         availableTo: formData.availableTo,
         minimumStay: formData.minimumStay,
@@ -605,6 +634,22 @@ export default function CompanyListingsPage() {
                   onChange={(e) => setFormData({ ...formData, amenities: e.target.value })}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                   placeholder="wifi, parking, pool, kitchen"
+                />
+              </div>
+
+              {/* Photos */}
+              <div className="border-t border-slate-200 pt-4">
+                <h3 className="text-sm font-medium text-slate-900 mb-3">
+                  <Images className="h-4 w-4 inline mr-1" />
+                  Listing Photos
+                </h3>
+                <MultiMediaPicker
+                  value={formData.images}
+                  onChange={handleImagesChange}
+                  coverImageIndex={formData.coverImageIndex}
+                  onCoverImageChange={handleCoverImageChange}
+                  maxImages={20}
+                  label="Listing Photos"
                 />
               </div>
 

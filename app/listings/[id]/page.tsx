@@ -7,13 +7,19 @@ import { Id } from '@/convex/_generated/dataModel';
 import PlatformNavbar from '@/components/platform/PlatformNavbar';
 import PlatformFooter from '@/components/platform/PlatformFooter';
 import Link from 'next/link';
-import { MapPin, Users, BedDouble, Bath, Home, DollarSign, Star, ArrowLeft, Check, Clock, Shield, Phone, Mail, Calendar } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { MapPin, Users, BedDouble, Bath, Home, DollarSign, Star, ArrowLeft, Check, Clock, Shield, Phone, Mail, Calendar, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useState } from 'react';
+import { useRootAuth } from '@/components/platform/RootAuthProvider';
+import { getOptimizedImageProps } from '@/lib/cloudflare-images';
 
 export default function ListingDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const router = useRouter();
+  const { user } = useRootAuth();
   const listing = useQuery(api.listings.getListing, { id: id as Id<'listings'> });
   const [showBookingModal, setShowBookingModal] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   if (listing === undefined) {
     return (
@@ -56,15 +62,52 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main content */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Image */}
+            {/* Image Gallery */}
             <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
               <div className="h-72 md:h-96 bg-gradient-to-br from-stone-100 to-stone-50 flex items-center justify-center relative">
                 {listing.featuredImage || (listing.images && listing.images.length > 0) ? (
-                  <img
-                    src={listing.featuredImage || (listing.images ? listing.images[0] : '')}
-                    alt={listing.title}
-                    className="w-full h-full object-cover"
-                  />
+                  <>
+                    <img
+                      {...getOptimizedImageProps(
+                        listing.images && listing.images.length > 0
+                          ? listing.images[currentImageIndex]
+                          : listing.featuredImage,
+                        listing.title,
+                        'public'
+                      )}
+                      className="w-full h-full object-cover"
+                    />
+                    {listing.images && listing.images.length > 1 && (
+                      <>
+                        <button
+                          onClick={() => setCurrentImageIndex(prev => prev === 0 ? listing.images.length - 1 : prev - 1)}
+                          className="absolute left-3 top-1/2 -translate-y-1/2 p-2 bg-white/90 hover:bg-white rounded-full shadow-lg transition-colors"
+                        >
+                          <ChevronLeft className="h-5 w-5 text-stone-700" />
+                        </button>
+                        <button
+                          onClick={() => setCurrentImageIndex(prev => prev === listing.images.length - 1 ? 0 : prev + 1)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-white/90 hover:bg-white rounded-full shadow-lg transition-colors"
+                        >
+                          <ChevronRight className="h-5 w-5 text-stone-700" />
+                        </button>
+                        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                          {listing.images.map((_: string, i: number) => (
+                            <button
+                              key={i}
+                              onClick={() => setCurrentImageIndex(i)}
+                              className={`w-2 h-2 rounded-full transition-colors ${
+                                i === currentImageIndex ? 'bg-white' : 'bg-white/50'
+                              }`}
+                            />
+                          ))}
+                        </div>
+                        <div className="absolute top-3 right-3 px-2.5 py-1 bg-black/60 text-white text-xs rounded-full">
+                          {currentImageIndex + 1} / {listing.images.length}
+                        </div>
+                      </>
+                    )}
+                  </>
                 ) : (
                   <Home className="h-16 w-16 text-stone-300" />
                 )}
@@ -141,7 +184,9 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
             {/* Price card */}
             <div className="bg-white rounded-xl border border-stone-200 p-6 sticky top-24">
               <div className="flex items-baseline gap-2 mb-4">
-                <span className="text-3xl font-bold text-[#16911c]">R {listing.pricePerNight}</span>
+                <span className="text-3xl font-bold text-[#16911c]">
+                  {listing.currency === 'ZAR' ? 'R' : listing.currency} {listing.pricePerNight?.toLocaleString()}
+                </span>
                 <span className="text-stone-500 text-sm">/ night</span>
               </div>
 
@@ -161,13 +206,21 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                 {listing.cleaningFee && listing.cleaningFee > 0 && (
                   <div className="flex justify-between text-stone-600">
                     <span>Cleaning fee</span>
-                    <span className="font-medium text-stone-900">R {listing.cleaningFee}</span>
+                    <span className="font-medium text-stone-900">
+                      {listing.currency === 'ZAR' ? 'R' : listing.currency} {listing.cleaningFee}
+                    </span>
                   </div>
                 )}
               </div>
 
               <button
-                onClick={() => setShowBookingModal(true)}
+                onClick={() => {
+                  if (user) {
+                    router.push(`/bookings/new?listingId=${listing._id}`);
+                  } else {
+                    setShowBookingModal(true);
+                  }
+                }}
                 className="w-full bg-[#16911c] hover:bg-[#0d6b11] text-white font-medium py-3 rounded-lg transition-colors"
               >
                 Request to Book
@@ -210,11 +263,19 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
         </div>
       </div>
 
-      {/* Booking Modal */}
-      {showBookingModal && (
+      {/* Booking Modal - only shown when NOT logged in */}
+      {showBookingModal && !user && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
-            <h2 className="text-lg font-semibold text-stone-900 mb-4">Request to Book</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-stone-900">Request to Book</h2>
+              <button
+                onClick={() => setShowBookingModal(false)}
+                className="p-1 text-stone-400 hover:text-stone-600 rounded-lg"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
             <p className="text-sm text-stone-500 mb-6">
               To book this property, please sign in or create an account. You&apos;ll be able to select dates and submit your booking request.
             </p>
