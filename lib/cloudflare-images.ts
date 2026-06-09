@@ -57,10 +57,6 @@ export class CloudflareImagesClient {
   private baseUrl: string;
 
   constructor() {
-    if (!validateCloudflareConfig()) {
-      throw new Error('Cloudflare Images configuration is invalid. Please check your environment variables.');
-    }
-
     this.accountId = env.CLOUDFLARE_ACCOUNT_ID;
     this.deliveryAccountId = env.CLOUDFLARE_DELIVERY_ACCOUNT_ID || env.CLOUDFLARE_ACCOUNT_ID;
     this.apiToken = env.CLOUDFLARE_API_TOKEN;
@@ -252,23 +248,7 @@ export class CloudflareImagesClient {
   }
 }
 
-// Export singleton instance (lazy — only throws when actually used without config)
-let _client: CloudflareImagesClient | null = null;
-export function getCloudflareImagesClient(): CloudflareImagesClient {
-  if (!_client) _client = new CloudflareImagesClient();
-  return _client;
-}
-
-const _noop: any = {};
-export const cloudflareImagesClient: CloudflareImagesClient = validateCloudflareConfig()
-  ? new CloudflareImagesClient()
-  : new Proxy(_noop, {
-      get(_, prop) {
-        if (prop === 'getOptimizedImageProps') return (_src: string, alt = 'Image') => ({ src: '/placeholder-image.svg', alt, unoptimized: true });
-        if (prop === 'getCloudflareImageUrl') return (_id: string, _variant = 'public') => null;
-        return () => { throw new Error('Cloudflare Images not configured. Set CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN.'); };
-      },
-    });
+export const cloudflareImagesClient = new CloudflareImagesClient();
 
 // Convenient wrapper functions
 export async function uploadImageToCloudflare(file: File | Buffer, filename?: string): Promise<string> {
