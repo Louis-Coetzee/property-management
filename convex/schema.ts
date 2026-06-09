@@ -1689,6 +1689,38 @@ export default defineSchema({
   .index("by_status", ["status"])
   .index("by_company_date", ["companyId", "bookingDate"]),
 
+  // Accommodation bookings - separate from appointment bookings
+  accommodationBookings: defineTable({
+    bookingCode: v.string(),
+    listingId: v.id("listings"),
+    userId: v.id("users"),
+    firstName: v.string(),
+    lastName: v.string(),
+    email: v.string(),
+    phone: v.string(),
+    checkInDate: v.string(),
+    checkOutDate: v.string(),
+    numberOfGuests: v.number(),
+    numberOfNights: v.number(),
+    pricePerNight: v.number(),
+    totalAmount: v.number(),
+    cleaningFee: v.optional(v.number()),
+    securityDeposit: v.optional(v.number()),
+    specialRequests: v.optional(v.string()),
+    status: v.union(v.literal("pending"), v.literal("confirmed"), v.literal("cancelled"), v.literal("completed")),
+    paymentStatus: v.union(v.literal("pending"), v.literal("paid"), v.literal("failed"), v.literal("refunded")),
+    paymentMethod: v.optional(v.string()),
+    payfastPaymentId: v.optional(v.string()),
+    confirmedAt: v.optional(v.number()),
+    cancelledAt: v.optional(v.number()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+  .index("by_booking_code", ["bookingCode"])
+  .index("by_user", ["userId"])
+  .index("by_listing", ["listingId"])
+  .index("by_status", ["status"]),
+
   // Booking system payment settings - separate from company payment settings
   bookingPaymentSettings: defineTable({
     companyId: v.id("companies"),
