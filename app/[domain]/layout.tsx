@@ -25,7 +25,13 @@ export default async function DomainLayout({
       <>
         <link rel="icon" href="/favicon.svg" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        {children}
+        <ConvexProvider>
+          <AuthProvider domain={domain}>
+            <DomainLayoutWrapper domain={domain} interClassName={inter.className}>
+              {children}
+            </DomainLayoutWrapper>
+          </AuthProvider>
+        </ConvexProvider>
       </>
     );
   }
