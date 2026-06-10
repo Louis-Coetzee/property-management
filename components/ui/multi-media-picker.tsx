@@ -231,7 +231,7 @@ export function MultiMediaPicker({
                 {/* Cover image - fills entire card */}
                 <img
                   {...getOptimizedImageProps(imageUrl, `Image ${index + 1}`, 'public')}
-                  className="absolute inset-0 w-full h-full object-cover"
+                  className="absolute inset-0 w-full h-full object-cover block"
                   alt={`Image ${index + 1}`}
                 />
 
