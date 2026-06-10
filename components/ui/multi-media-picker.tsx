@@ -243,7 +243,7 @@ export function MultiMediaPicker({
                   </div>
                 </div>
 
-                <div className="aspect-video relative">
+                <div className="aspect-[3/1] relative">
                   <img
                     {...getOptimizedImageProps(imageUrl, `Image ${index + 1}`, 'public')}
                     className="w-full h-full object-cover"
@@ -288,24 +288,6 @@ export function MultiMediaPicker({
                       <X className="h-3 w-3" />
                     </Button>
                   </div>
-                </div>
-                
-                {/* Image info */}
-                <div className="p-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium text-gray-700">
-                      Image {index + 1}
-                    </span>
-                    {index === coverImageIndex && onCoverImageChange && (
-                      <Badge variant="secondary" className="text-xs">
-                        <Star className="h-2 w-2 mr-1" />
-                        Cover
-                      </Badge>
-                    )}
-                  </div>
-                  <p className="text-xs text-gray-500 truncate mt-1" title={imageUrl}>
-                    {imageUrl.split('/').pop() || imageUrl}
-                  </p>
                 </div>
               </div>
             ))}
