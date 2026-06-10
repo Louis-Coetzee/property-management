@@ -4,7 +4,7 @@ import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { ImagePlus, X, Trash2, GripVertical, Star, Crown, Image as ImageIcon } from 'lucide-react';
+import { ImagePlus, X, Trash2, GripVertical, Crown, Image as ImageIcon } from 'lucide-react';
 import MediaLibraryModal from '@/components/media-library-modal';
 import { Id } from '@/convex/_generated/dataModel';
 import { useRootAuth } from '@/components/platform/RootAuthProvider';
@@ -221,13 +221,23 @@ export function MultiMediaPicker({
                 onDragLeave={handleDragLeave}
                 onDrop={(e) => handleDrop(e, index)}
                 className={cn(
-                  "relative group border-2 rounded-lg overflow-hidden bg-gray-50 cursor-move transition-all duration-200",
+                  "relative group border-2 rounded-lg overflow-hidden bg-gray-900 cursor-move transition-all duration-200 aspect-[4/1]",
                   draggedIndex === index && "opacity-50 scale-95",
-                  draggedOverIndex === index && draggedIndex !== index && "border-blue-400 bg-blue-50",
+                  draggedOverIndex === index && draggedIndex !== index && "border-blue-400",
                   index === coverImageIndex && onCoverImageChange && "border-blue-500 ring-2 ring-blue-200",
                   !disabled && "hover:border-gray-300"
                 )}
               >
+                {/* Cover image - fills entire card */}
+                <img
+                  {...getOptimizedImageProps(imageUrl, `Image ${index + 1}`, 'public')}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  alt={`Image ${index + 1}`}
+                />
+
+                {/* Dark gradient overlay for readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
+
                 {/* Cover image badge */}
                 {index === coverImageIndex && onCoverImageChange && (
                   <Badge className="absolute top-2 left-2 z-10 bg-blue-600 text-white text-xs">
@@ -238,56 +248,40 @@ export function MultiMediaPicker({
 
                 {/* Drag handle */}
                 <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div className="bg-black/50 text-white p-1 rounded">
+                  <div className="bg-black/50 text-white p-1 rounded backdrop-blur-sm">
                     <GripVertical className="h-4 w-4" />
                   </div>
                 </div>
 
-                <div className="aspect-[3/1] relative">
-                  <img
-                    {...getOptimizedImageProps(imageUrl, `Image ${index + 1}`, 'public')}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                      const errorDiv = e.currentTarget.nextElementSibling as HTMLElement;
-                      if (errorDiv) errorDiv.classList.remove('hidden');
-                    }}
-                  />
-                  <div className="hidden w-full h-full flex items-center justify-center bg-gray-100 text-gray-500 text-sm">
-                    <ImageIcon className="h-8 w-8 mb-2" />
-                    Failed to load image
-                  </div>
-                  
-                  {/* Action buttons */}
-                  <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    {/* Set as cover button */}
-                    {onCoverImageChange && index !== coverImageIndex && (
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => handleSetCoverImage(index)}
-                        disabled={disabled}
-                        className="h-6 w-6 p-0 bg-blue-600 hover:bg-blue-700 text-white"
-                        title="Set as cover image"
-                      >
-                        <Crown className="h-3 w-3" />
-                      </Button>
-                    )}
-                    
-                    {/* Remove button */}
+                {/* Action buttons */}
+                <div className="absolute top-2 right-2 flex gap-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                  {/* Set as cover button */}
+                  {onCoverImageChange && index !== coverImageIndex && (
                     <Button
                       type="button"
-                      variant="destructive"
+                      variant="secondary"
                       size="sm"
-                      onClick={() => handleRemoveImage(index)}
+                      onClick={() => handleSetCoverImage(index)}
                       disabled={disabled}
-                      className="h-6 w-6 p-0"
-                      title="Remove image"
+                      className="h-7 w-7 p-0 bg-blue-600 hover:bg-blue-700 text-white"
+                      title="Set as cover image"
                     >
-                      <X className="h-3 w-3" />
+                      <Crown className="h-3.5 w-3.5" />
                     </Button>
-                  </div>
+                  )}
+                  
+                  {/* Remove button */}
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => handleRemoveImage(index)}
+                    disabled={disabled}
+                    className="h-7 w-7 p-0"
+                    title="Remove image"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </Button>
                 </div>
               </div>
             ))}
