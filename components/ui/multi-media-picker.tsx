@@ -4,7 +4,7 @@ import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { ImagePlus, X, Trash2, GripVertical, Crown, Image as ImageIcon } from 'lucide-react';
+import { ImagePlus, X, Trash2, GripVertical, Crown } from 'lucide-react';
 import MediaLibraryModal from '@/components/media-library-modal';
 import { Id } from '@/convex/_generated/dataModel';
 import { useRootAuth } from '@/components/platform/RootAuthProvider';
@@ -221,7 +221,7 @@ export function MultiMediaPicker({
                 onDragLeave={handleDragLeave}
                 onDrop={(e) => handleDrop(e, index)}
                 className={cn(
-                  "relative group border-2 rounded-lg overflow-hidden bg-gray-900 cursor-move transition-all duration-200 aspect-[4/1]",
+                  "relative group border-2 rounded-lg overflow-hidden bg-gray-900 cursor-move transition-all duration-200 aspect-[7/2]",
                   draggedIndex === index && "opacity-50 scale-95",
                   draggedOverIndex === index && draggedIndex !== index && "border-blue-400",
                   index === coverImageIndex && onCoverImageChange && "border-blue-500 ring-2 ring-blue-200",
